@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Comments",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "properties": {
+      "id": {
+        "type": "string"
+      },
+      "text": {
+        "type": "string"
+      },
+      "created": {
+        "type": "string",
+        "format": "date-time"
+      },
+      "resolved": {
+        "type": "boolean"
+      }
+    },
+    "required": [
+      "id",
+      "text",
+      "created",
+      "resolved"
+    ]
+  }
+}

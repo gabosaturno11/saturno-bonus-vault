@@ -1,0 +1,1358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Saturno Movement - Black Friday Bonus Vault</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #0B0D10;
+            --bg-secondary: #12151A;
+            --bg-card: rgba(255, 255, 255, 0.03);
+            --bg-card-hover: rgba(255, 255, 255, 0.06);
+            --accent: #3B82F6;
+            --accent-glow: rgba(59, 130, 246, 0.3);
+            --text-primary: #FFFFFF;
+            --text-secondary: rgba(255, 255, 255, 0.7);
+            --text-muted: rgba(255, 255, 255, 0.5);
+            --border: rgba(255, 255, 255, 0.08);
+            --success: #10B981;
+            --warning: #F59E0B;
+            --gradient-1: linear-gradient(135deg, #3B82F6 0%, #8B5CF6 100%);
+            --gradient-2: linear-gradient(135deg, #10B981 0%, #3B82F6 100%);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Animated Background */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .bg-animation::before {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            top: -50%;
+            left: -50%;
+            background:
+                radial-gradient(ellipse at 20% 20%, rgba(59, 130, 246, 0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(139, 92, 246, 0.1) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 50%, rgba(16, 185, 129, 0.05) 0%, transparent 70%);
+            animation: bgMove 30s ease-in-out infinite;
+        }
+
+        @keyframes bgMove {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            25% { transform: translate(2%, 2%) rotate(1deg); }
+            50% { transform: translate(0, 4%) rotate(0deg); }
+            75% { transform: translate(-2%, 2%) rotate(-1deg); }
+        }
+
+        /* Navigation */
+        .nav {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(11, 13, 16, 0.9);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            padding: 16px 24px;
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 700;
+            font-size: 1.25rem;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--gradient-1);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 32px;
+        }
+
+        .nav-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: color 0.3s ease;
+            cursor: pointer;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            color: var(--accent);
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 80px 24px 60px;
+            text-align: center;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--accent-glow);
+            border: 1px solid var(--accent);
+            border-radius: 100px;
+            padding: 8px 16px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-bottom: 24px;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 0 0 var(--accent-glow); }
+            50% { box-shadow: 0 0 20px 5px var(--accent-glow); }
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #FFFFFF 0%, #3B82F6 50%, #8B5CF6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto 32px;
+        }
+
+        .hero-stats {
+            display: flex;
+            justify-content: center;
+            gap: 48px;
+            flex-wrap: wrap;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 24px 80px;
+        }
+
+        /* Section Headers */
+        .section {
+            margin-bottom: 60px;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 32px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .section-title h2 {
+            font-size: 1.75rem;
+            font-weight: 700;
+        }
+
+        .section-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .section-count {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 100px;
+            padding: 6px 14px;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        /* Card Grid */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--gradient-1);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .card:hover {
+            background: var(--bg-card-hover);
+            transform: translateY(-4px);
+            border-color: rgba(59, 130, 246, 0.3);
+        }
+
+        .card:hover::before {
+            opacity: 1;
+        }
+
+        .card-icon {
+            width: 56px;
+            height: 56px;
+            background: var(--bg-secondary);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.75rem;
+            margin-bottom: 16px;
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+        }
+
+        .card-description {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+            line-height: 1.5;
+        }
+
+        .card-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 16px;
+            border-top: 1px solid var(--border);
+        }
+
+        .card-size {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .card-action {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--accent);
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        /* App Cards - Larger */
+        .app-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 24px;
+        }
+
+        .app-card {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 20px;
+            padding: 32px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .app-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--gradient-1);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: -1;
+        }
+
+        .app-card:hover {
+            transform: translateY(-6px);
+            border-color: var(--accent);
+            box-shadow: 0 20px 60px rgba(59, 130, 246, 0.2);
+        }
+
+        .app-card:hover::before {
+            opacity: 0.1;
+        }
+
+        .app-badge {
+            display: inline-block;
+            background: var(--accent);
+            color: white;
+            font-size: 0.7rem;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 100px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+
+        .app-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .app-description {
+            color: var(--text-secondary);
+            margin-bottom: 24px;
+            line-height: 1.6;
+        }
+
+        .app-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--gradient-1);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 14px 28px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .app-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px var(--accent-glow);
+        }
+
+        /* Search & Filters */
+        .filters {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 20px 24px;
+            margin-bottom: 40px;
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 250px;
+            position: relative;
+        }
+
+        .search-box input {
+            width: 100%;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 12px 16px 12px 44px;
+            color: var(--text-primary);
+            font-size: 0.95rem;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+
+        .search-box input:focus {
+            border-color: var(--accent);
+        }
+
+        .search-box::before {
+            content: '🔍';
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1rem;
+        }
+
+        .filter-btn {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 12px 20px;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .filter-btn:hover, .filter-btn.active {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: white;
+        }
+
+        /* Download All Button */
+        .download-all {
+            background: var(--gradient-2);
+            border: none;
+            border-radius: 12px;
+            padding: 16px 32px;
+            color: white;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .download-all:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(16, 185, 129, 0.3);
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 40px 24px;
+            border-top: 1px solid var(--border);
+            color: var(--text-muted);
+        }
+
+        .footer-logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .hero {
+                padding: 60px 20px 40px;
+            }
+
+            .hero-stats {
+                gap: 24px;
+            }
+
+            .card-grid, .app-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .filters {
+                flex-direction: column;
+            }
+
+            .search-box {
+                width: 100%;
+            }
+        }
+
+        /* Smooth scroll */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Category specific colors */
+        .category-programs .section-icon { background: linear-gradient(135deg, #3B82F6, #1D4ED8); }
+        .category-routines .section-icon { background: linear-gradient(135deg, #10B981, #059669); }
+        .category-guides .section-icon { background: linear-gradient(135deg, #8B5CF6, #7C3AED); }
+        .category-apps .section-icon { background: linear-gradient(135deg, #F59E0B, #D97706); }
+
+        /* 21-Day Challenge Circular Tracker */
+        .challenge-container {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(139, 92, 246, 0.05) 100%);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 32px;
+            padding: 48px;
+            margin-bottom: 60px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .challenge-container::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 60%;
+            height: 200%;
+            background: radial-gradient(ellipse, rgba(139, 92, 246, 0.15) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .challenge-header {
+            text-align: center;
+            margin-bottom: 48px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .challenge-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, #F59E0B, #EF4444);
+            color: white;
+            font-size: 0.8rem;
+            font-weight: 700;
+            padding: 8px 20px;
+            border-radius: 100px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 20px;
+        }
+
+        .challenge-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #FFFFFF 0%, #3B82F6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 12px;
+        }
+
+        .challenge-subtitle {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Circular Progress Tracker */
+        .circle-tracker {
+            position: relative;
+            width: 100%;
+            max-width: 700px;
+            margin: 0 auto;
+            aspect-ratio: 1;
+        }
+
+        /* Main orbital ring */
+        .orbit-ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90%;
+            height: 90%;
+            border: 2px dashed rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+        }
+
+        .orbit-ring-inner {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 65%;
+            height: 65%;
+            border: 1px dashed rgba(255, 255, 255, 0.05);
+            border-radius: 50%;
+        }
+
+        /* Center hub */
+        .center-hub {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 140px;
+            height: 140px;
+            background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-primary) 100%);
+            border: 2px solid var(--accent);
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 60px var(--accent-glow);
+            z-index: 10;
+        }
+
+        .center-hub-icon {
+            font-size: 2.5rem;
+            margin-bottom: 8px;
+        }
+
+        .center-hub-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .center-hub-value {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--accent);
+        }
+
+        /* Day nodes */
+        .day-node {
+            position: absolute;
+            width: 48px;
+            height: 48px;
+            background: var(--bg-card);
+            border: 2px solid var(--border);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 5;
+        }
+
+        .day-node:hover {
+            transform: scale(1.2);
+            border-color: var(--accent);
+            box-shadow: 0 0 20px var(--accent-glow);
+            z-index: 20;
+        }
+
+        .day-node.week-marker {
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, var(--accent), #8B5CF6);
+            border: none;
+            color: white;
+            font-weight: 700;
+        }
+
+        .day-node.milestone {
+            border-color: var(--success);
+            box-shadow: 0 0 15px rgba(16, 185, 129, 0.4);
+        }
+
+        .day-node.milestone::after {
+            content: '🌟';
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            font-size: 1rem;
+        }
+
+        /* Progress line connecting nodes */
+        .progress-line {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform-origin: center;
+            height: 2px;
+            background: linear-gradient(90deg, var(--accent), transparent);
+            z-index: 1;
+        }
+
+        /* Challenge CTA */
+        .challenge-cta {
+            text-align: center;
+            margin-top: 48px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .challenge-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            background: linear-gradient(135deg, #F59E0B 0%, #EF4444 100%);
+            color: white;
+            border: none;
+            border-radius: 16px;
+            padding: 18px 40px;
+            font-size: 1.15rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .challenge-btn:hover {
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 20px 50px rgba(245, 158, 11, 0.3);
+        }
+
+        .challenge-features {
+            display: flex;
+            justify-content: center;
+            gap: 32px;
+            margin-top: 24px;
+            flex-wrap: wrap;
+        }
+
+        .challenge-feature {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .challenge-feature-icon {
+            color: var(--success);
+        }
+
+        /* Week labels */
+        .week-labels {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-top: 32px;
+            flex-wrap: wrap;
+        }
+
+        .week-label {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 12px 20px;
+        }
+
+        .week-label-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .week-label-dot.week-1 { background: #3B82F6; }
+        .week-label-dot.week-2 { background: #8B5CF6; }
+        .week-label-dot.week-3 { background: #F59E0B; }
+
+        .week-label-text {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        @media (max-width: 768px) {
+            .circle-tracker {
+                max-width: 350px;
+            }
+            .day-node {
+                width: 32px;
+                height: 32px;
+                font-size: 0.7rem;
+            }
+            .day-node.week-marker {
+                width: 40px;
+                height: 40px;
+            }
+            .center-hub {
+                width: 100px;
+                height: 100px;
+            }
+            .center-hub-icon {
+                font-size: 1.5rem;
+            }
+            .challenge-title {
+                font-size: 1.75rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation"></div>
+
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="nav-container">
+            <div class="logo">
+                <div class="logo-icon">🪐</div>
+                <span>Saturno Movement</span>
+            </div>
+            <div class="nav-links">
+                <a class="nav-link active" onclick="scrollToSection('programs')">Programs</a>
+                <a class="nav-link" onclick="scrollToSection('routines')">Routines</a>
+                <a class="nav-link" onclick="scrollToSection('guides')">Guides</a>
+                <a class="nav-link" onclick="scrollToSection('apps')">Interactive Apps</a>
+                <a class="nav-link" href="https://www.saturnomovement.com" target="_blank">Website</a>
+                <a class="nav-link" href="https://apps.apple.com/app/saturno-movement" target="_blank">App Store</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-badge">
+            <span>🎉</span>
+            <span>Black Friday Exclusive Access</span>
+        </div>
+        <h1>Your Handstand Mastery Vault</h1>
+        <p>Unlock the complete collection of programs, routines, guides, and interactive tools to transform your handstand practice.</p>
+        <div class="hero-stats">
+            <div class="stat">
+                <div class="stat-value">19</div>
+                <div class="stat-label">PDF Resources</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value">4</div>
+                <div class="stat-label">Interactive Apps</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value">∞</div>
+                <div class="stat-label">Lifetime Access</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <div class="container">
+
+        <!-- Search & Filters -->
+        <div class="filters">
+            <div class="search-box">
+                <input type="text" placeholder="Search resources..." id="searchInput" onkeyup="filterCards()">
+            </div>
+            <button class="filter-btn active" onclick="filterByCategory('all')">All</button>
+            <button class="filter-btn" onclick="filterByCategory('program')">Programs</button>
+            <button class="filter-btn" onclick="filterByCategory('routine')">Routines</button>
+            <button class="filter-btn" onclick="filterByCategory('guide')">Guides</button>
+        </div>
+
+        <!-- 21-Day Challenge Section -->
+        <section class="challenge-container" id="programs">
+            <div class="challenge-header">
+                <div class="challenge-badge">🔥 Featured Program</div>
+                <h2 class="challenge-title">21-Day Handstand Challenge</h2>
+                <p class="challenge-subtitle">Transform your handstand practice with daily guided training. Track your progress through the lunar cycle of mastery.</p>
+            </div>
+
+            <!-- Circular Tracker -->
+            <div class="circle-tracker">
+                <!-- Orbital rings -->
+                <div class="orbit-ring"></div>
+                <div class="orbit-ring-inner"></div>
+
+                <!-- Center Hub -->
+                <div class="center-hub">
+                    <div class="center-hub-icon">🌙</div>
+                    <div class="center-hub-label">Challenge</div>
+                    <div class="center-hub-value">21 Days</div>
+                </div>
+
+                <!-- Day nodes will be positioned via JavaScript -->
+                <div id="day-nodes"></div>
+            </div>
+
+            <!-- Week Labels -->
+            <div class="week-labels">
+                <div class="week-label">
+                    <div class="week-label-dot week-1"></div>
+                    <span class="week-label-text">Week 1: Foundation</span>
+                </div>
+                <div class="week-label">
+                    <div class="week-label-dot week-2"></div>
+                    <span class="week-label-text">Week 2: Build</span>
+                </div>
+                <div class="week-label">
+                    <div class="week-label-dot week-3"></div>
+                    <span class="week-label-text">Week 3: Master</span>
+                </div>
+            </div>
+
+            <!-- CTA -->
+            <div class="challenge-cta">
+                <a href="#" class="challenge-btn">
+                    <span>🚀</span>
+                    <span>Join the Challenge</span>
+                </a>
+                <div class="challenge-features">
+                    <div class="challenge-feature">
+                        <span class="challenge-feature-icon">✓</span>
+                        <span>Daily Video Lessons</span>
+                    </div>
+                    <div class="challenge-feature">
+                        <span class="challenge-feature-icon">✓</span>
+                        <span>Progress Tracking</span>
+                    </div>
+                    <div class="challenge-feature">
+                        <span class="challenge-feature-icon">✓</span>
+                        <span>Community Support</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Program PDFs Section -->
+        <section class="section category-programs">
+            <div class="section-header">
+                <div class="section-title">
+                    <div class="section-icon">📚</div>
+                    <h2>Complete Program PDFs</h2>
+                </div>
+                <div class="section-count">8 Programs</div>
+            </div>
+            <div class="card-grid">
+                <div class="card" data-category="program" onclick="downloadPDF('pdfs/HBF_Phase1_Week-1.pdf')">
+                    <div class="card-icon">📖</div>
+                    <div class="card-title">HBF Phase 1 - Week 1</div>
+                    <div class="card-description">Foundation week to build your handstand base with progressive drills.</div>
+                    <div class="card-meta">
+                        <span class="card-size">31.9 MB</span>
+                        <span class="card-action">Download →</span>
+                    </div>
+                </div>
+                <div class="card" data-category="program" onclick="downloadPDF('pdfs/HBF_Phase1_Week-2.pdf')">
+                    <div class="card-icon">📖</div>
+                    <div class="card-title">HBF Phase 1 - Week 2</div>
+                    <div class="card-description">Building momentum with increased balance work and conditioning.</div>
+                    <div class="card-meta">
+                        <span class="card-size">30.6 MB</span>
+                        <span class="card-action">Download →</span>
+                    </div>
+                </div>
+                <div class="card" data-category="program" onclick="downloadPDF('pdfs/HBF_Phase1_Week-3.pdf')">
+                    <div class="card-icon">📖</div>
+                    <div class="card-title">HBF Phase 1 - Week 3</div>
+                    <div class="card-description">Intermediate progressions and shape refinement techniques.</div>
+                    <div class="card-meta">
+                        <span class="card-size">31.6 MB</span>
+                        <span class="card-action">Download →</span>
+                    </div>
+                </div>
+                <div class="card" data-category="program" onclick="downloadPDF('pdfs/HBF_Phase1_Week-4.pdf')">
+                    <div class="card-icon">📖</div>
+                    <div class="card-title">HBF Phase 1 - Week 4</div>
+                    <div class="card-description">Advanced conditioning and endurance building protocols.</div>
+                    <div class="card-meta">
+                        <span class="card-size">32.1 MB</span>
+                        <span class="card-action">Download →</span>
+                    </div>
+                </div>
+                <div class="card" data-category="program" onclick="downloadPDF('pdfs/HBF_Phase1_Week-5.pdf')">
+                    <div class="card-icon">📖</div>
+                    <div class="card-title">HBF Phase 1 - Week 5</div>
+                    <div class="card-description">Peak performance week with complex skill integration.</div>
+                    <div class="card-meta">
+                        <span class="card-size">31.2 MB</span>
+                        <span class="card-action">Download →</span>
+                    </div>
+                </div>
+                <div class="card" data-category="program" onclick="downloadPDF('pdfs/HBF_Phase1_Week-6.pdf')">
+                    <div class="card-icon">📖</div>
+                    <div class="card-title">HBF Phase 1 - Week 6</div>
+                    <div class="card-description">Mastery consolidation and testing your progress.</div>
+                    <div class="card-meta">
+                        <span class="card-size">31.2 MB</span>
+                        <span class="card-action">Download →</span>
+                    </div>
+                </div>
+                <div class="card" data-category="program" onclick="downloadPDF('pdfs/Handstand-Press-Program.pdf')">
+                    <div class="card-icon">🤸</div>
+                    <div class="card-title">Handstand Press Program</div>
+                    <div class="card-description">Master the press to handstand with structured progressions.</div>
+                    <div class="card-meta">
+                        <span class="card-size">1.5 MB</span>
+                        <span class="card-action">Download →</span>
+                    </div>
+                </div>
+                <div class="card" data-category="program" onclick="downloadPDF('pdfs/Press-to-Handstand-Full-Program.pdf')">
+                    <div class="card-icon">⬆️</div>
+                    <div class="card-title">Press to Handstand - Full Program</div>
+                    <div class="card-description">Complete comprehensive guide to achieving your press.</div>
+                    <div class="card-meta">
+                        <span class="card-size">1.8 MB</span>
+                        <span class="card-action">Download →</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Routines Section -->
+        <section class="section category-routines" id="routines">
+            <div class="section-header">
+                <div class="section-title">
+                    <div class="section-icon">⚡</div>
+                    <h2>15-Minute Skill Routines</h2>
+                </div>
+                <div class="section-count">5 Routines</div>
+            </div>
+            <div class="card-grid">
+                <div class="card" data-category="routine" onclick="downloadPDF('pdfs/15min-HSPU-Routine.pdf')">
+                    <div class="card-icon">💪</div>
+                    <div class="card-title">15min HSPU Routine</div>
+                    <div class="card-description">Quick and effective handstand push-up development routine.</div>
+                    <div class="card-meta">
+                        <span class="card-size">462 KB</span>
+                        <span class="card-action">Download →</span>
+                    </div>
+                </div>
+                <div class="card" data-category="routine" onclick="downloadPDF('pdfs/15min-Front-Lever-Routine.pdf')">
+                    <div class="card-icon">🏋️</div>
+                    <div class="card-title">15min Front Lever Routine</div>
+                    <div class="card-description">Targeted front lever progressions in a condensed format.</div>
+                    <div class="card-meta">
+                        <span class="card-size">5.7 MB</span>
+                        <span class="card-action">Download →</span>
+                    </div>
+                </div>
+                <div class="card" data-category="routine" onclick="downloadPDF('pdfs/15min-Planche-Routine.pdf')">
+                    <div class="card-icon">🔥</div>
+                    <div class="card-title">15min Planche Routine</div>
+                    <div class="card-description">Essential planche work packed into 15 minutes.</div>
+                    <div class="card-meta">
+                        <span class="card-size">20.2 MB</span>
+                        <span class="card-action">Download →</span>
+                    </div>
+                </div>
+                <div class="card" data-category="routine" onclick="downloadPDF('pdfs/15min-Muscle-Up-Routine.pdf')">
+                    <div class="card-icon">🎯</div>
+                    <div class="card-title">15min Muscle Up Routine</div>
+                    <div class="card-description">Efficient muscle up progression drills.</div>
+                    <div class="card-meta">
+                        <span class="card-size">26.5 MB</span>
+                        <span class="card-action">Download →</span>
+                    </div>
+                </div>
+                <div class="card" data-category="routine" onclick="downloadPDF('pdfs/Saturno-General-Warmup.pdf')">
+                    <div class="card-icon">🔥</div>
+                    <div class="card-title">Saturno General Warmup</div>
+                    <div class="card-description">The complete warmup protocol for any training session.</div>
+                    <div class="card-meta">
+                        <span class="card-size">5.9 MB</span>
+                        <span class="card-action">Download →</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Guides Section -->
+        <section class="section category-guides" id="guides">
+            <div class="section-header">
+                <div class="section-title">
+                    <div class="section-icon">📘</div>
+                    <h2>Knowledge Guides</h2>
+                </div>
+                <div class="section-count">6 Guides</div>
+            </div>
+            <div class="card-grid">
+                <div class="card" data-category="guide" onclick="downloadPDF('pdfs/HBF-Introduction.pdf')">
+                    <div class="card-icon">👋</div>
+                    <div class="card-title">HBF Introduction</div>
+                    <div class="card-description">Start here - your introduction to the Handstand Basics Framework.</div>
+                    <div class="card-meta">
+                        <span class="card-size">126 KB</span>
+                        <span class="card-action">Download →</span>
+                    </div>
+                </div>
+                <div class="card" data-category="guide" onclick="downloadPDF('pdfs/Mobility-vs-Flexibility.pdf')">
+                    <div class="card-icon">🧘</div>
+                    <div class="card-title">Mobility vs Flexibility</div>
+                    <div class="card-description">Understanding the key differences for optimal training.</div>
+                    <div class="card-meta">
+                        <span class="card-size">57 KB</span>
+                        <span class="card-action">Download →</span>
+                    </div>
+                </div>
+                <div class="card" data-category="guide" onclick="downloadPDF('pdfs/Solar-System-Deployment-HBS.pdf')">
+                    <div class="card-icon">🪐</div>
+                    <div class="card-title">Solar System Deployment</div>
+                    <div class="card-description">The Saturno training philosophy explained.</div>
+                    <div class="card-meta">
+                        <span class="card-size">230 KB</span>
+                        <span class="card-action">Download →</span>
+                    </div>
+                </div>
+                <div class="card" data-category="guide" onclick="downloadPDF('pdfs/Grip-Training-Templates.pdf')">
+                    <div class="card-icon">✊</div>
+                    <div class="card-title">Grip Training Templates</div>
+                    <div class="card-description">Essential grip work for handstand stability.</div>
+                    <div class="card-meta">
+                        <span class="card-size">119 KB</span>
+                        <span class="card-action">Download →</span>
+                    </div>
+                </div>
+                <div class="card" data-category="guide" onclick="downloadPDF('pdfs/Move-List-Database.pdf')">
+                    <div class="card-icon">📋</div>
+                    <div class="card-title">Move List Database</div>
+                    <div class="card-description">Complete exercise database for your training toolbox.</div>
+                    <div class="card-meta">
+                        <span class="card-size">476 KB</span>
+                        <span class="card-action">Download →</span>
+                    </div>
+                </div>
+                <div class="card" data-category="guide" onclick="downloadPDF('pdfs/Calisthenics-Skills-Programming-Ebook.pdf')">
+                    <div class="card-icon">📖</div>
+                    <div class="card-title">Calisthenics Skills Programming</div>
+                    <div class="card-description">The complete ebook on programming for skill development.</div>
+                    <div class="card-meta">
+                        <span class="card-size">14.5 MB</span>
+                        <span class="card-action">Download →</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Interactive Apps Section -->
+        <section class="section category-apps" id="apps">
+            <div class="section-header">
+                <div class="section-title">
+                    <div class="section-icon">🚀</div>
+                    <h2>Interactive Applications</h2>
+                </div>
+                <div class="section-count">4 Apps</div>
+            </div>
+            <div class="app-grid">
+                <div class="app-card">
+                    <div class="app-badge">Featured</div>
+                    <div class="app-title">The Art of Calisthenics</div>
+                    <div class="app-description">Interactive movement ecosystem with 7 parts, 3 stages, and 6 disciplines. Navigate through the complete Saturno Movement philosophy.</div>
+                    <a href="apps/calisthenics-ecosystem/index.html" class="app-btn">Launch App →</a>
+                </div>
+                <div class="app-card">
+                    <div class="app-badge">Content Hub</div>
+                    <div class="app-title">Saturno Command</div>
+                    <div class="app-description">Your content creation machine. Plan, create, and manage all your movement content from one powerful interface.</div>
+                    <a href="apps/saturno-command/index.html" class="app-btn">Launch App →</a>
+                </div>
+                <div class="app-card">
+                    <div class="app-badge">Development</div>
+                    <div class="app-title">Saturno Hub Starter</div>
+                    <div class="app-description">The foundation template for building your own Saturno-style applications and dashboards.</div>
+                    <a href="apps/saturno-hub-starter/public/index.html" class="app-btn">Launch App →</a>
+                </div>
+                <div class="app-card">
+                    <div class="app-badge">Writing</div>
+                    <div class="app-title">Writing Hub Kortex</div>
+                    <div class="app-description">Advanced writing assistant inspired by Kortex methodology for structured content creation.</div>
+                    <a href="apps/writing-hub-kortex/index.html" class="app-btn">Launch App →</a>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-logo">Saturno Movement</div>
+        <p>Black Friday 2025 - Exclusive Bonus Vault</p>
+        <p style="margin-top: 8px; font-size: 0.85rem;">Questions? Contact support@saturnomovement.com</p>
+    </footer>
+
+    <script>
+        // Download PDF function
+        function downloadPDF(path) {
+            window.open(path, '_blank');
+        }
+
+        // Scroll to section
+        function scrollToSection(sectionId) {
+            const section = document.getElementById(sectionId);
+            if (section) {
+                section.scrollIntoView({ behavior: 'smooth' });
+            }
+            // Update active nav
+            document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+
+        // Filter cards
+        function filterCards() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const cards = document.querySelectorAll('.card');
+
+            cards.forEach(card => {
+                const title = card.querySelector('.card-title').textContent.toLowerCase();
+                const description = card.querySelector('.card-description').textContent.toLowerCase();
+
+                if (title.includes(searchTerm) || description.includes(searchTerm)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        // Filter by category
+        function filterByCategory(category) {
+            const cards = document.querySelectorAll('.card');
+            const buttons = document.querySelectorAll('.filter-btn');
+
+            buttons.forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            cards.forEach(card => {
+                if (category === 'all' || card.dataset.category === category) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        // Animate on scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.card, .app-card').forEach(card => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+            observer.observe(card);
+        });
+
+        // Generate 21-day circular tracker nodes
+        function generateDayNodes() {
+            const container = document.getElementById('day-nodes');
+            if (!container) return;
+
+            const tracker = document.querySelector('.circle-tracker');
+            if (!tracker) return;
+
+            const centerX = 50; // percentage
+            const centerY = 50;
+            const radius = 42; // percentage from center
+
+            for (let day = 1; day <= 21; day++) {
+                const angle = ((day - 1) / 21) * 360 - 90; // Start from top
+                const radians = angle * (Math.PI / 180);
+
+                const x = centerX + radius * Math.cos(radians);
+                const y = centerY + radius * Math.sin(radians);
+
+                const node = document.createElement('div');
+                node.className = 'day-node';
+
+                // Week markers at day 7, 14, 21
+                if (day === 7 || day === 14 || day === 21) {
+                    node.classList.add('week-marker');
+                }
+
+                // Milestone days
+                if (day === 1 || day === 21) {
+                    node.classList.add('milestone');
+                }
+
+                node.textContent = day;
+                node.style.left = `calc(${x}% - 24px)`;
+                node.style.top = `calc(${y}% - 24px)`;
+                node.title = `Day ${day}`;
+
+                container.appendChild(node);
+            }
+        }
+
+        // Initialize circular tracker
+        generateDayNodes();
+
+        console.log('Saturno Movement Bonus Vault loaded successfully!');
+    </script>
+</body>
+</html>

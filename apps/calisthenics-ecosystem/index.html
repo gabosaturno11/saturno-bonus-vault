@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Art of Calisthenics - Movement Ecosystem</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Navigation Header -->
+        <header class="nav-header">
+            <h1 class="main-title">The Art of Calisthenics</h1>
+            <p class="subtitle">Interactive Movement Ecosystem</p>
+            
+            <!-- Navigation Modes -->
+            <div class="nav-modes">
+                <button class="nav-btn active" data-mode="overview">Overview</button>
+                <button class="nav-btn" data-mode="parts">7 Parts</button>
+                <button class="nav-btn" data-mode="stages">3 Stages</button>
+                <button class="nav-btn" data-mode="disciplines">6 Disciplines</button>
+                <button class="nav-btn" data-mode="pathways">Pathways</button>
+            </div>
+        </header>
+
+        <!-- Main Visualization Area -->
+        <main class="visualization-container">
+            <!-- Overview Mode - Central Ecosystem Hub -->
+            <section id="overview-mode" class="mode-section active">
+                <div class="ecosystem-hub">
+                    <div class="central-core">
+                        <div class="core-title">Movement Mastery System</div>
+                        <div class="core-subtitle">Interconnected Journey</div>
+                    </div>
+                    
+                    <!-- Parts Ring -->
+                    <div class="parts-ring">
+                        <div class="part-node" data-part="1" style="--angle: 0deg;">
+                            <div class="node-content">
+                                <div class="node-title">START HERE</div>
+                                <div class="node-subtitle">The Invitation</div>
+                            </div>
+                        </div>
+                        <div class="part-node" data-part="2" style="--angle: 51.4deg;">
+                            <div class="node-content">
+                                <div class="node-title">ART OF CALISTHENICS</div>
+                                <div class="node-subtitle">Philosophy</div>
+                            </div>
+                        </div>
+                        <div class="part-node" data-part="3" style="--angle: 102.8deg;">
+                            <div class="node-content">
+                                <div class="node-title">MASTERING</div>
+                                <div class="node-subtitle">Technical Core</div>
+                            </div>
+                        </div>
+                        <div class="part-node" data-part="4" style="--angle: 154.2deg;">
+                            <div class="node-content">
+                                <div class="node-title">ROAD TO MASTERY</div>
+                                <div class="node-subtitle">Specialization</div>
+                            </div>
+                        </div>
+                        <div class="part-node" data-part="5" style="--angle: 205.6deg;">
+                            <div class="node-content">
+                                <div class="node-title">BUILD PROGRAM</div>
+                                <div class="node-subtitle">Application</div>
+                            </div>
+                        </div>
+                        <div class="part-node" data-part="6" style="--angle: 257deg;">
+                            <div class="node-content">
+                                <div class="node-title">ENDLESS JOURNEY</div>
+                                <div class="node-subtitle">Sustainability</div>
+                            </div>
+                        </div>
+                        <div class="part-node" data-part="7" style="--angle: 308.4deg;">
+                            <div class="node-content">
+                                <div class="node-title">YOU ARE MASTER</div>
+                                <div class="node-subtitle">Legacy</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Stages Spiral -->
+                    <div class="stages-spiral">
+                        <div class="stage-node foundation" data-stage="1">
+                            <div class="stage-title">FOUNDATION</div>
+                            <div class="stage-subtitle">Root System</div>
+                        </div>
+                        <div class="stage-node expansion" data-stage="2">
+                            <div class="stage-title">EXPANSION</div>
+                            <div class="stage-subtitle">Trunk Growth</div>
+                        </div>
+                        <div class="stage-node transformation" data-stage="3">
+                            <div class="stage-title">TRANSFORMATION</div>
+                            <div class="stage-subtitle">Canopy Expression</div>
+                        </div>
+                    </div>
+
+                    <!-- Disciplines Constellation -->
+                    <div class="disciplines-constellation">
+                        <div class="discipline-node" data-discipline="bodybuilding" style="--x: 20%; --y: 25%;">
+                            <div class="discipline-title">BODYBUILDING</div>
+                            <div class="discipline-subtitle">Foundation Forest</div>
+                        </div>
+                        <div class="discipline-node" data-discipline="power_free" style="--x: 80%; --y: 20%;">
+                            <div class="discipline-title">POWER FREE</div>
+                            <div class="discipline-subtitle">Mountain Peaks</div>
+                        </div>
+                        <div class="discipline-node" data-discipline="freestyle" style="--x: 85%; --y: 70%;">
+                            <div class="discipline-title">FREESTYLE</div>
+                            <div class="discipline-subtitle">Flowing Rivers</div>
+                        </div>
+                        <div class="discipline-node" data-discipline="street_lifting" style="--x: 15%; --y: 75%;">
+                            <div class="discipline-title">STREET LIFTING</div>
+                            <div class="discipline-subtitle">The Bedrock</div>
+                        </div>
+                        <div class="discipline-node" data-discipline="hand_balancing" style="--x: 50%; --y: 10%;">
+                            <div class="discipline-title">HAND-BALANCING</div>
+                            <div class="discipline-subtitle">Sky Realm</div>
+                        </div>
+                        <div class="discipline-node" data-discipline="mobility" style="--x: 50%; --y: 90%;">
+                            <div class="discipline-title">MOBILITY</div>
+                            <div class="discipline-subtitle">The Atmosphere</div>
+                        </div>
+                    </div>
+
+                    <!-- Connection Lines Canvas -->
+                    <canvas id="connections-canvas" class="connections-canvas"></canvas>
+                </div>
+            </section>
+
+            <!-- Parts Mode -->
+            <section id="parts-mode" class="mode-section">
+                <div class="parts-flowchart">
+                    <h2 class="section-title">The Seven-Part Journey</h2>
+                    <div class="flowchart-container" id="parts-container"></div>
+                </div>
+            </section>
+
+            <!-- Stages Mode -->
+            <section id="stages-mode" class="mode-section">
+                <div class="stages-visualization">
+                    <h2 class="section-title">Three-Stage Spiral Progression</h2>
+                    <div class="spiral-container" id="stages-container"></div>
+                </div>
+            </section>
+
+            <!-- Disciplines Mode -->
+            <section id="disciplines-mode" class="mode-section">
+                <div class="disciplines-galaxy">
+                    <h2 class="section-title">Six-Discipline Ecosystem</h2>
+                    <div class="galaxy-container" id="disciplines-container"></div>
+                </div>
+            </section>
+
+            <!-- Pathways Mode -->
+            <section id="pathways-mode" class="mode-section">
+                <div class="pathways-interface">
+                    <h2 class="section-title">Choose Your Adventure</h2>
+                    <div class="pathway-selector">
+                        <button class="pathway-btn" data-pathway="beginner">Beginner Pathway</button>
+                        <button class="pathway-btn" data-pathway="intermediate">Intermediate Pathway</button>  
+                        <button class="pathway-btn" data-pathway="advanced">Advanced Pathway</button>
+                        <button class="pathway-btn" data-pathway="strength">Strength Focus</button>
+                        <button class="pathway-btn" data-pathway="skill">Skill Focus</button>
+                        <button class="pathway-btn" data-pathway="health">Health Focus</button>
+                    </div>
+                    <div class="pathway-visualization" id="pathway-container"></div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Detail Panel -->
+        <aside class="detail-panel" id="detail-panel">
+            <button class="close-panel" id="close-panel">&times;</button>
+            <div class="panel-content" id="panel-content">
+                <!-- Dynamic content will be loaded here -->
+            </div>
+        </aside>
+
+        <!-- Connection Toggle Controls -->
+        <div class="connection-controls">
+            <label class="toggle-label">
+                <input type="checkbox" id="show-connections" checked>
+                <span class="toggle-text">Show Connections</span>
+            </label>
+            <label class="toggle-label">
+                <input type="checkbox" id="highlight-flow">
+                <span class="toggle-text">Highlight Flow</span>
+            </label>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

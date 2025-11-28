@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "MovementDNA",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "pattern": {
+      "type": "string",
+      "enum": [
+        "Push Horizontal",
+        "Push Vertical",
+        "Pull Horizontal",
+        "Pull Vertical",
+        "Hinge",
+        "Squat",
+        "Core",
+        "Carry"
+      ]
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "Basics",
+        "Strength",
+        "Skill",
+        "Hypertrophy",
+        "Mobility"
+      ]
+    },
+    "rpe": {
+      "type": [
+        "integer",
+        "string"
+      ]
+    },
+    "tempo": {
+      "type": "string"
+    },
+    "sr": {
+      "description": "sets\u00d7reps",
+      "type": "string"
+    },
+    "progression": {
+      "type": "string"
+    },
+    "antagonist": {
+      "type": "string"
+    },
+    "contra": {
+      "type": "string"
+    },
+    "tags": {
+      "type": "string"
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "name",
+    "pattern",
+    "category"
+  ]
+}

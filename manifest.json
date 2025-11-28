@@ -1,0 +1,232 @@
+{
+  "name": "Saturno Movement - Black Friday Bonus Vault",
+  "version": "1.0.0",
+  "created": "2025-11-27",
+  "author": "Saturno Movement",
+  "description": "Complete handstand mastery resource collection",
+  "statistics": {
+    "total_pdfs": 19,
+    "total_apps": 4,
+    "total_size_mb": 257
+  },
+  "categories": {
+    "programs": {
+      "name": "Complete Programs",
+      "description": "Full training programs for handstand development",
+      "items": [
+        {
+          "id": "hbf-week-1",
+          "title": "HBF Phase 1 - Week 1",
+          "file": "pdfs/HBF_Phase1_Week-1.pdf",
+          "size_bytes": 31968016,
+          "size_mb": 30.5,
+          "description": "Foundation week to build your handstand base"
+        },
+        {
+          "id": "hbf-week-2",
+          "title": "HBF Phase 1 - Week 2",
+          "file": "pdfs/HBF_Phase1_Week-2.pdf",
+          "size_bytes": 30628427,
+          "size_mb": 29.2,
+          "description": "Building momentum with increased balance work"
+        },
+        {
+          "id": "hbf-week-3",
+          "title": "HBF Phase 1 - Week 3",
+          "file": "pdfs/HBF_Phase1_Week-3.pdf",
+          "size_bytes": 31645637,
+          "size_mb": 30.2,
+          "description": "Intermediate progressions and shape refinement"
+        },
+        {
+          "id": "hbf-week-4",
+          "title": "HBF Phase 1 - Week 4",
+          "file": "pdfs/HBF_Phase1_Week-4.pdf",
+          "size_bytes": 32143557,
+          "size_mb": 30.7,
+          "description": "Advanced conditioning and endurance building"
+        },
+        {
+          "id": "hbf-week-5",
+          "title": "HBF Phase 1 - Week 5",
+          "file": "pdfs/HBF_Phase1_Week-5.pdf",
+          "size_bytes": 31217947,
+          "size_mb": 29.8,
+          "description": "Peak performance week with complex skill integration"
+        },
+        {
+          "id": "hbf-week-6",
+          "title": "HBF Phase 1 - Week 6",
+          "file": "pdfs/HBF_Phase1_Week-6.pdf",
+          "size_bytes": 31222376,
+          "size_mb": 29.8,
+          "description": "Mastery consolidation and testing your progress"
+        },
+        {
+          "id": "handstand-press",
+          "title": "Handstand Press Program",
+          "file": "pdfs/Handstand-Press-Program.pdf",
+          "size_bytes": 1557923,
+          "size_mb": 1.5,
+          "description": "Master the press to handstand with structured progressions"
+        },
+        {
+          "id": "press-to-handstand-full",
+          "title": "Press to Handstand - Full Program",
+          "file": "pdfs/Press-to-Handstand-Full-Program.pdf",
+          "size_bytes": 1824985,
+          "size_mb": 1.7,
+          "description": "Complete comprehensive guide to achieving your press"
+        }
+      ]
+    },
+    "routines": {
+      "name": "15-Minute Skill Routines",
+      "description": "Quick and effective skill development routines",
+      "items": [
+        {
+          "id": "15min-hspu",
+          "title": "15min HSPU Routine",
+          "file": "pdfs/15min-HSPU-Routine.pdf",
+          "size_bytes": 462522,
+          "size_mb": 0.4,
+          "description": "Quick and effective handstand push-up development"
+        },
+        {
+          "id": "15min-front-lever",
+          "title": "15min Front Lever Routine",
+          "file": "pdfs/15min-Front-Lever-Routine.pdf",
+          "size_bytes": 5776238,
+          "size_mb": 5.5,
+          "description": "Targeted front lever progressions"
+        },
+        {
+          "id": "15min-planche",
+          "title": "15min Planche Routine",
+          "file": "pdfs/15min-Planche-Routine.pdf",
+          "size_bytes": 20286384,
+          "size_mb": 19.3,
+          "description": "Essential planche work packed into 15 minutes"
+        },
+        {
+          "id": "15min-muscle-up",
+          "title": "15min Muscle Up Routine",
+          "file": "pdfs/15min-Muscle-Up-Routine.pdf",
+          "size_bytes": 26539051,
+          "size_mb": 25.3,
+          "description": "Efficient muscle up progression drills"
+        },
+        {
+          "id": "general-warmup",
+          "title": "Saturno General Warmup",
+          "file": "pdfs/Saturno-General-Warmup.pdf",
+          "size_bytes": 5933832,
+          "size_mb": 5.7,
+          "description": "The complete warmup protocol for any training session"
+        }
+      ]
+    },
+    "guides": {
+      "name": "Knowledge Guides",
+      "description": "Educational resources and reference materials",
+      "items": [
+        {
+          "id": "hbf-intro",
+          "title": "HBF Introduction",
+          "file": "pdfs/HBF-Introduction.pdf",
+          "size_bytes": 126524,
+          "size_mb": 0.1,
+          "description": "Start here - your introduction to HBF"
+        },
+        {
+          "id": "mobility-vs-flexibility",
+          "title": "Mobility vs Flexibility",
+          "file": "pdfs/Mobility-vs-Flexibility.pdf",
+          "size_bytes": 57195,
+          "size_mb": 0.1,
+          "description": "Understanding the key differences for optimal training"
+        },
+        {
+          "id": "solar-system",
+          "title": "Solar System Deployment",
+          "file": "pdfs/Solar-System-Deployment-HBS.pdf",
+          "size_bytes": 230006,
+          "size_mb": 0.2,
+          "description": "The Saturno training philosophy explained"
+        },
+        {
+          "id": "grip-training",
+          "title": "Grip Training Templates",
+          "file": "pdfs/Grip-Training-Templates.pdf",
+          "size_bytes": 119676,
+          "size_mb": 0.1,
+          "description": "Essential grip work for handstand stability"
+        },
+        {
+          "id": "move-list",
+          "title": "Move List Database",
+          "file": "pdfs/Move-List-Database.pdf",
+          "size_bytes": 476925,
+          "size_mb": 0.5,
+          "description": "Complete exercise database for your training toolbox"
+        },
+        {
+          "id": "skills-ebook",
+          "title": "Calisthenics Skills Programming Ebook",
+          "file": "pdfs/Calisthenics-Skills-Programming-Ebook.pdf",
+          "size_bytes": 14558156,
+          "size_mb": 13.9,
+          "description": "The complete ebook on programming for skill development"
+        }
+      ]
+    },
+    "apps": {
+      "name": "Interactive Applications",
+      "description": "Web-based interactive tools and apps",
+      "items": [
+        {
+          "id": "calisthenics-ecosystem",
+          "title": "The Art of Calisthenics",
+          "path": "apps/calisthenics-ecosystem/index.html",
+          "type": "webapp",
+          "description": "Interactive movement ecosystem with 7 parts, 3 stages, and 6 disciplines",
+          "featured": true
+        },
+        {
+          "id": "saturno-command",
+          "title": "Saturno Command",
+          "path": "apps/saturno-command/index.html",
+          "type": "webapp",
+          "description": "Content creation machine for planning and managing content"
+        },
+        {
+          "id": "saturno-hub-starter",
+          "title": "Saturno Hub Starter",
+          "path": "apps/saturno-hub-starter/public/index.html",
+          "type": "webapp",
+          "description": "Foundation template for Saturno-style applications"
+        },
+        {
+          "id": "writing-hub-kortex",
+          "title": "Writing Hub Kortex",
+          "path": "apps/writing-hub-kortex/index.html",
+          "type": "webapp",
+          "description": "Advanced writing assistant for structured content creation"
+        }
+      ]
+    }
+  },
+  "pages": {
+    "dashboard": "index.html",
+    "webinar": "webinar.html"
+  },
+  "meta": {
+    "theme": {
+      "primary": "#0B0D10",
+      "accent": "#3B82F6",
+      "text": "#FFFFFF"
+    },
+    "branding": "Saturno Movement",
+    "event": "Black Friday 2025"
+  }
+}

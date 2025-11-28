@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kortex Writing Hub</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-left">
+                <div class="logo">
+                    <div class="logo-icon"></div>
+                    <span>Kortex</span>
+                </div>
+            </div>
+            <div class="header-center">
+                <div class="focus-timer-container">
+                    <div class="focus-timer" id="focusTimer">
+                        <svg class="timer-svg" width="80" height="80">
+                            <circle cx="40" cy="40" r="35" class="timer-bg" />
+                            <circle cx="40" cy="40" r="35" class="timer-progress" id="timerProgress" />
+                        </svg>
+                        <div class="timer-content">
+                            <div class="timer-time" id="timerTime">25:00</div>
+                            <div class="timer-category" id="timerCategory">Writing</div>
+                        </div>
+                        <div class="timer-settings-dot" id="timerSettings"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="header-right">
+                <button class="btn btn--secondary" id="layoutToggle">Layout</button>
+                <button class="btn btn--primary" id="exportBtn">Export</button>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <div class="app-main">
+            <!-- Left Sidebar - Knowledge Vault -->
+            <aside class="sidebar sidebar-left" id="leftSidebar">
+                <div class="sidebar-header">
+                    <h3>Knowledge Vault</h3>
+                    <button class="sidebar-toggle" id="leftToggle">←</button>
+                </div>
+                <div class="sidebar-content">
+                    <div class="search-bar">
+                        <input type="text" placeholder="Search documents..." id="searchInput" class="form-control">
+                    </div>
+                    <div class="knowledge-tree" id="knowledgeTree">
+                        <div class="tree-section">
+                            <div class="tree-header">
+                                <span class="tree-icon">📁</span>
+                                <span>Documents</span>
+                                <button class="add-btn" id="addDocument">+</button>
+                            </div>
+                            <div class="tree-items" id="documentTree"></div>
+                        </div>
+                        <div class="tree-section">
+                            <div class="tree-header">
+                                <span class="tree-icon">📂</span>
+                                <span>Projects</span>
+                                <button class="add-btn" id="addProject">+</button>
+                            </div>
+                            <div class="tree-items" id="projectTree"></div>
+                        </div>
+                        <div class="tree-section">
+                            <div class="tree-header">
+                                <span class="tree-icon">🎯</span>
+                                <span>Assets</span>
+                                <button class="add-btn" id="addAsset">+</button>
+                            </div>
+                            <div class="tree-items" id="assetTree"></div>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Center Panel - Editor -->
+            <main class="main-editor" id="mainEditor">
+                <div class="editor-header">
+                    <div class="editor-tabs" id="editorTabs">
+                        <div class="tab active" data-doc="new">
+                            <span>New Document</span>
+                            <button class="tab-close">×</button>
+                        </div>
+                    </div>
+                    <div class="editor-controls">
+                        <button class="btn btn--secondary" id="previewToggle">Preview</button>
+                        <select class="form-control" id="modeSelect">
+                            <option value="markdown">Markdown</option>
+                            <option value="plain">Plain Text</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="editor-workspace">
+                    <div class="editor-pane" id="editorPane">
+                        <textarea 
+                            class="editor-textarea" 
+                            id="documentEditor" 
+                            placeholder="# Start writing...
+
+Use Markdown syntax for formatting:
+- **bold text**
+- *italic text*
+- [links](https://example.com)
+- `code blocks`
+
+Type / for quick commands..."
+                        ></textarea>
+                    </div>
+                    <div class="preview-pane hidden" id="previewPane">
+                        <div class="preview-content" id="previewContent"></div>
+                    </div>
+                </div>
+            </main>
+
+            <!-- Right Sidebar - AI & Tools -->
+            <aside class="sidebar sidebar-right" id="rightSidebar">
+                <div class="sidebar-header">
+                    <div class="tool-tabs">
+                        <button class="tool-tab active" data-tool="ai">AI Chat</button>
+                        <button class="tool-tab" data-tool="constellation">Map</button>
+                        <button class="tool-tab" data-tool="projects">Projects</button>
+                    </div>
+                    <button class="sidebar-toggle" id="rightToggle">→</button>
+                </div>
+                <div class="sidebar-content">
+                    <!-- AI Chat Panel -->
+                    <div class="tool-panel active" id="aiPanel">
+                        <div class="ai-model-selector">
+                            <select class="form-control" id="aiModelSelect">
+                                <option value="gpt4">GPT-4</option>
+                                <option value="claude3">Claude 3</option>
+                                <option value="gemini">Gemini Pro</option>
+                            </select>
+                        </div>
+                        <div class="chat-messages" id="chatMessages">
+                            <div class="chat-message system">
+                                <div class="message-content">
+                                    <p>Hello! I'm your AI writing assistant. I can help you:</p>
+                                    <ul>
+                                        <li>Generate content ideas</li>
+                                        <li>Improve your writing</li>
+                                        <li>Answer questions about your documents</li>
+                                        <li>Provide feedback and suggestions</li>
+                                    </ul>
+                                    <p>How can I assist you today?</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="chat-input-container">
+                            <textarea class="chat-input" id="chatInput" placeholder="Ask me anything about your writing..." rows="3"></textarea>
+                            <button class="btn btn--primary" id="sendMessage">Send</button>
+                        </div>
+                    </div>
+
+                    <!-- Constellation Map Panel -->
+                    <div class="tool-panel" id="constellationPanel">
+                        <div class="constellation-container">
+                            <svg class="constellation-svg" id="constellationSvg" width="100%" height="400">
+                                <defs>
+                                    <filter id="glow">
+                                        <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                                        <feMerge> 
+                                            <feMergeNode in="coloredBlur"/>
+                                            <feMergeNode in="SourceGraphic"/> 
+                                        </feMerge>
+                                    </filter>
+                                </defs>
+                            </svg>
+                        </div>
+                        <div class="constellation-controls">
+                            <button class="btn btn--secondary" id="addNode">Add Node</button>
+                            <button class="btn btn--secondary" id="resetZoom">Reset View</button>
+                        </div>
+                    </div>
+
+                    <!-- Projects Panel -->
+                    <div class="tool-panel" id="projectsPanel">
+                        <div class="project-view-toggle">
+                            <button class="view-btn active" data-view="list">List</button>
+                            <button class="view-btn" data-view="kanban">Kanban</button>
+                            <button class="view-btn" data-view="timeline">Timeline</button>
+                        </div>
+                        <div class="projects-container" id="projectsContainer">
+                            <!-- Projects will be rendered here -->
+                        </div>
+                    </div>
+                </div>
+            </aside>
+        </div>
+
+        <!-- Timer Settings Modal -->
+        <div class="modal hidden" id="timerModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Focus Timer Settings</h3>
+                    <button class="modal-close" id="closeTimerModal">×</button>
+                </div>
+                <div class="modal-body">
+                    <div class="timer-categories" id="timerCategories">
+                        <!-- Categories will be rendered here -->
+                    </div>
+                    <div class="timer-duration">
+                        <label class="form-label">Duration (minutes)</label>
+                        <input type="number" class="form-control" id="timerDuration" value="25" min="1" max="120">
+                    </div>
+                    <div class="custom-category">
+                        <h4>Create Custom Category</h4>
+                        <input type="text" class="form-control" id="newCategoryName" placeholder="Category name">
+                        <input type="color" class="form-control" id="newCategoryColor" value="#4A90E2">
+                        <button class="btn btn--primary" id="addCategory">Add Category</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Document Modal -->
+        <div class="modal hidden" id="documentModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>New Document</h3>
+                    <button class="modal-close" id="closeDocumentModal">×</button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="form-label">Document Title</label>
+                        <input type="text" class="form-control" id="newDocumentTitle" placeholder="Enter document title">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Tags (comma separated)</label>
+                        <input type="text" class="form-control" id="newDocumentTags" placeholder="writing, ideas, draft">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Template</label>
+                        <select class="form-control" id="documentTemplate">
+                            <option value="blank">Blank Document</option>
+                            <option value="article">Article Template</option>
+                            <option value="notes">Meeting Notes</option>
+                            <option value="story">Story Structure</option>
+                        </select>
+                    </div>
+                    <button class="btn btn--primary" id="createDocument">Create Document</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

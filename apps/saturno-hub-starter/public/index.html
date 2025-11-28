@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Saturno Command Center — v2</title>
+<style>
+:root{
+  --bg:#090d12;--surface:#0e151d;--surface2:#111a24;--text:#e6f0ff;--muted:#9bb1c7;
+  --brand:#3ad6ff;--accent:#8b5cf6;--ok:#22c55e;--warn:#f59e0b;--err:#ef4444;--border:#1a2635;
+}
+*{box-sizing:border-box} body{margin:0;background:radial-gradient(1000px 600px at 80% -10%,rgba(58,214,255,.12),transparent),linear-gradient(180deg,#090d12,#0a1117);color:var(--text);font:500 14px/1.55 ui-sans-serif,system-ui,Segoe UI,Roboto}
+a{color:var(--brand);text-decoration:none}
+.hdr{position:sticky;top:0;z-index:20;display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:#0c131ad0;border-bottom:1px solid var(--border);backdrop-filter:blur(6px) saturate(140%)}
+.logo{display:flex;gap:8px;align-items:center}
+.badge{border:1px solid #274562;background:#0d1724;border-radius:999px;padding:.2rem .6rem}
+.kbd{border:1px solid var(--border);border-bottom-width:2px;border-radius:6px;padding:2px 6px;background:#0f1824}
+.wrap{display:grid;grid-template-columns:240px 1fr;min-height:calc(100vh - 56px)}
+.nav{border-right:1px solid var(--border);background:var(--surface);padding:12px;display:flex;flex-direction:column;gap:8px}
+.nav h5{margin:10px 6px 4px;color:var(--muted);font-weight:600}
+.nav .item{padding:9px 10px;border-radius:10px;border:1px solid var(--border);background:#0c1420;cursor:pointer;display:flex;justify-content:space-between;align-items:center}
+.nav .item.active{background:linear-gradient(135deg,#2dd7ff,#7aa6ff 60%,#a48bff);color:#00131c;border-color:#356aa0}
+.main{padding:14px}
+.hidden{display:none !important}
+.section{display:none} .section.show{display:block}
+.grid{display:grid;gap:10px}
+.grid.kpi{grid-template-columns:repeat(4,minmax(160px,1fr))}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px;box-shadow:0 10px 26px rgba(0,0,0,.25)}
+.card h4{margin:0 0 8px}
+.row{display:flex;gap:8px;align-items:center}
+.right{margin-left:auto}
+.btn{background:#153149;border:1px solid #21405a;color:#dff7ff;border-radius:10px;padding:8px 12px;cursor:pointer}
+.btn.primary{background:linear-gradient(135deg,#2dd7ff,#7aa6ff 60%,#a48bff);border-color:#356aa0;color:#00131c}
+.btn.ghost{background:transparent;border-color:#274562}
+.btn.small{padding:6px 9px;font-size:12px}
+input,select,textarea{background:#0d1520;border:1px solid var(--border);border-radius:10px;color:#e6f0ff;padding:8px}
+input[type="file"]{padding:6px}
+hr{border:none;border-top:1px solid var(--border);margin:10px 0}
+.mono{font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace}
+.muted{color:var(--muted)}
+/* Dashboard mini widgets */
+.progress{height:8px;border-radius:8px;background:#0d1520;border:1px solid var(--border);overflow:hidden}
+.progress > span{display:block;height:100%;background:linear-gradient(90deg,#2dd7ff,#8b5cf6)}
+.kv{display:grid;grid-template-columns:1fr auto;gap:6px}
+/* Meta — DAW board */
+.meta-grid{display:grid;grid-template-columns:280px 1fr 360px;grid-template-rows:220px 1fr 180px;grid-template-areas:"library preview inspector" "library timeline inspector" "library stacks inspector";gap:12px}
+.panel{background:#0f1824;border:1px solid var(--border);border-radius:12px;box-shadow:0 10px 26px rgba(0,0,0,.25);padding:10px;overflow:auto}
+.preview{grid-area:preview;display:grid;place-items:center;min-height:200px;background:repeating-linear-gradient(-45deg,#0d1420,#0d1420 8px,#0c131d 8px,#0c131d 16px);border:1px dashed #213046}
+.timeline{grid-area:timeline;padding:0}
+.tracks{display:grid;gap:6px;padding:8px}
+.track{background:#0c1522;border:1px solid #203046;border-radius:8px;min-height:52px;position:relative}
+.track-label{position:absolute;left:8px;top:6px;font-size:12px;color:var(--muted)}
+.lane{position:absolute;left:0;right:0;top:0;bottom:0;padding:22px 8px 8px 8px;display:flex;gap:6px;overflow-x:auto}
+.clip{min-width:120px;background:linear-gradient(135deg,#2bbdff22,#7aa6ff22);border:1px solid #2a4a6b;border-radius:8px;padding:6px 8px;cursor:grab}
+.clip.selected{outline:2px solid var(--brand)}
+.library{grid-area:library}
+.library .item{display:flex;justify-content:space-between;align-items:center;background:#0d1520;border:1px solid var(--border);border-radius:10px;padding:8px;margin-bottom:6px}
+.inspector{grid-area:inspector}
+.stacks{grid-area:stacks}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+/* Writing */
+.editor{min-height:340px;background:#0d1520;border:1px solid var(--border);border-radius:12px;padding:14px}
+mark.hl{background:rgba(139,92,246,.2);border-bottom:2px dotted var(--accent)}
+mark.hl.resolved{opacity:.6;border-bottom-style:dashed}
+.comments{background:#0f1824;border:1px solid var(--border);border-radius:12px;padding:10px;max-height:420px;overflow:auto}
+/* SM Lab */
+.calendar{display:grid;grid-template-columns:120px repeat(7,1fr);gap:6px}
+.cell{background:#0d1520;border:1px solid var(--border);border-radius:8px;padding:8px;min-height:90px}
+.cell.hdr{background:#0f1824;text-align:center;font-weight:600}
+.post{background:#0a1b2a;border:1px solid #1d3750;border-radius:8px;padding:6px;margin-top:6px}
+/* Assets */
+.drop{border:2px dashed #27516f;border-radius:12px;padding:20px;text-align:center;background:rgba(39,81,111,.15)}
+.asset{display:flex;justify-content:space-between;align-items:center;padding:8px;border:1px solid var(--border);background:#0d1520;border-radius:8px;margin:6px 0}
+/* Command Palette */
+.palette{position:fixed;inset:0;display:none;align-items:flex-start;justify-content:center;padding-top:12vh;background:rgba(0,0,0,.55);z-index:50}
+.palette.show{display:flex}
+.palette .box{width:min(800px,92vw);background:#0f1824;border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.palette .box header{padding:8px 10px;border-bottom:1px solid var(--border)}
+.palette input{width:100%}
+.palette .list{max-height:360px;overflow:auto}
+.palette .cmd{padding:10px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;cursor:pointer}
+/* Modal */
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;z-index:60}
+.modal.show{display:flex}
+.modal .box{background:#0f1824;border:1px solid var(--border);border-radius:12px;min-width:320px;max-width:720px;width:90%}
+.modal .head{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-bottom:1px solid var(--border)}
+.modal .body{padding:14px}
+.toast{position:fixed;bottom:16px;right:16px;background:#0f1824;border:1px solid var(--border);padding:10px 12px;border-radius:10px;box-shadow:0 10px 24px rgba(0,0,0,.3);display:none}
+</style>
+</head>
+<body>
+  <div class="hdr">
+    <div class="logo">
+      <strong>Saturno Command Center</strong>
+      <span class="badge">v2</span>
+      <span class="muted">Ctrl/⌘+K</span><span class="kbd mono">palette</span>
+    </div>
+    <div class="row">
+      <button id="saveAll" class="btn small">💾 Save</button>
+      <button id="exportAll" class="btn small">📦 Export JSON</button>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <aside class="nav" id="sidebar">
+      <h5>Navigate</h5>
+      <div class="item active" data-goto="dash">Dashboard <span>⌘1</span></div>
+      <div class="item" data-goto="meta">Meta Control <span>⌘2</span></div>
+      <div class="item" data-goto="sm">SM Lab <span>⌘3</span></div>
+      <div class="item" data-goto="writing">Writing Hub <span>⌘4</span></div>
+      <div class="item" data-goto="collab">Collaboration <span>⌘5</span></div>
+      <div class="item" data-goto="assets">Assets <span>⌘6</span></div>
+      <div class="item" data-goto="agents">AI Hub <span>⌘7</span></div>
+      <hr>
+      <div class="row"><input id="searchAll" placeholder="Search everything…" style="flex:1"><button class="btn small" id="openPalette">⌘K</button></div>
+    </aside>
+
+    <main class="main">
+      <!-- DASHBOARD -->
+      <section id="sec-dash" class="section show">
+        <div class="grid kpi">
+          <div class="card">
+            <h4>Movements in Library</h4>
+            <div class="kv"><span id="kpiMoves" class="mono">0</span><span class="muted">items</span></div>
+            <div class="progress"><span id="progMoves" style="width:30%"></span></div>
+          </div>
+          <div class="card">
+            <h4>Timeline Clips</h4>
+            <div class="kv"><span id="kpiClips" class="mono">0</span><span class="muted">clips</span></div>
+            <div class="progress"><span id="progClips" style="width:10%"></span></div>
+          </div>
+          <div class="card">
+            <h4>Projects</h4>
+            <div class="kv"><span id="kpiProjects" class="mono">0</span><span class="muted">active</span></div>
+            <div class="progress"><span id="progProjects" style="width:50%"></span></div>
+          </div>
+          <div class="card">
+            <h4>Drafts</h4>
+            <div class="kv"><span id="kpiDrafts" class="mono">0</span><span class="muted">saved</span></div>
+            <div class="progress"><span id="progDrafts" style="width:20%"></span></div>
+          </div>
+        </div>
+        <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:10px">
+          <div class="card">
+            <h4>Quick Actions</h4>
+            <div class="row" style="flex-wrap:wrap;gap:8px">
+              <button class="btn small" id="qaNewProgram">+ Program</button>
+              <button class="btn small" id="qaNewPost">+ SM Post</button>
+              <button class="btn small" id="qaNewDoc">+ Doc</button>
+              <button class="btn small" id="qaImportAssets">+ Import Assets</button>
+              <button class="btn small" id="qaCheat">📇 Cheat Sheet</button>
+              <button class="btn small" id="qaGenerateOutline">🧠 Outline from Timeline</button>
+            </div>
+          </div>
+          <div class="card">
+            <h4>Command Log</h4>
+            <div id="cmdLog" class="mono" style="white-space:pre-wrap;min-height:120px;background:#0d1520;border:1px solid var(--border);border-radius:8px;padding:8px">ready…</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- META CONTROL -->
+      <section id="sec-meta" class="section">
+        <div class="meta-grid">
+          <div class="panel library">
+            <h4>Movement Library</h4>
+            <div class="row">
+              <input id="libSearch" placeholder="Search movements…" style="flex:1">
+              <button class="btn ghost" id="importCSVBtn">Import CSV/JSON</button>
+              <input id="csvInput" type="file" accept=".csv,.json" class="hidden">
+            </div>
+            <div class="row">
+              <button class="btn" id="cheatBtn">📇 Cheat Sheet</button>
+              <button class="btn" id="postStub">🔗 POST DB (stub)</button>
+            </div>
+            <div id="movementList" style="margin-top:8px"></div>
+          </div>
+          <div class="panel preview"><div class="muted">🎬 Preview (drop an image/video to attach)</div>
+            <input id="prevFile" type="file" accept="image/*,video/*">
+            <div id="prevArea" style="margin-top:8px"></div>
+          </div>
+          <div class="panel timeline">
+            <div class="row" style="justify-content:space-between;padding:6px 8px 0 8px">
+              <h4 style="margin:0">Timeline</h4>
+              <div class="row">
+                <button class="btn ghost" id="clearTimeline">Clear</button>
+                <button class="btn primary" id="exportJSON">Export JSON</button>
+              </div>
+            </div>
+            <div class="tracks" id="tracks"></div>
+          </div>
+          <div class="panel inspector">
+            <h4>Inspector — Movement DNA</h4>
+            <div id="inspectorEmpty" class="muted">Select a clip to edit its DNA.</div>
+            <div id="inspectorForm" class="hidden">
+              <div class="grid2">
+                <div class="field"><label>Movement</label><input id="dna_name"></div>
+                <div class="field"><label>Pattern</label><select id="dna_pattern"><option>Push Horizontal</option><option>Push Vertical</option><option>Pull Horizontal</option><option>Pull Vertical</option><option>Hinge</option><option>Squat</option><option>Core</option><option>Carry</option></select></div>
+                <div class="field"><label>Category</label><select id="dna_category"><option>Basics</option><option>Strength</option><option>Skill</option><option>Hypertrophy</option><option>Mobility</option></select></div>
+                <div class="field"><label>RPE</label><input id="dna_rpe" type="number" min="1" max="10"></div>
+                <div class="field"><label>Tempo</label><input id="dna_tempo" placeholder="3-1-1"></div>
+                <div class="field"><label>Sets × Reps</label><input id="dna_sr" placeholder="4×8"></div>
+              </div>
+              <div class="field"><label>Progression</label><input id="dna_progression" placeholder="Incline → Standard → Ring"></div>
+              <div class="field"><label>Antagonist / Pair</label><input id="dna_antagonist" placeholder="Ring Row"></div>
+              <div class="field"><label>Contraindications</label><textarea id="dna_contra" rows="3" placeholder="Shoulder pain → hands‑elevated"></textarea></div>
+              <div class="field"><label>Tags</label><input id="dna_tags" placeholder="#basics #push"></div>
+              <div class="field"><label>Notes</label><textarea id="dna_notes" rows="3" placeholder="Cues, regressions, setup"></textarea></div>
+              <div class="row right"><button class="btn primary" id="saveDNA">Save</button></div>
+            </div>
+          </div>
+          <div class="panel stacks">
+            <h4>Stacks</h4>
+            <div class="muted">Layers for audio cues, tempo beeps, coaching notes (future: render timeline).</div>
+          </div>
+        </div>
+        <div class="row" style="justify-content:flex-end;margin-top:10px">
+          <button class="btn" id="outlineFromTimeline">🧠 Generate Session Outline → Writing</button>
+        </div>
+      </section>
+
+      <!-- SM LAB -->
+      <section id="sec-sm" class="section">
+        <div class="row" style="justify-content:space-between">
+          <h4>Content Calendar</h4>
+          <div class="row">
+            <select id="smPlatform"><option>Instagram</option><option>YouTube</option><option>Newsletter</option><option>X</option></select>
+            <button class="btn small" id="exportCal">Export Calendar</button>
+          </div>
+        </div>
+        <div class="calendar" id="calGrid"></div>
+        <hr>
+        <div class="row" style="gap:10px;flex-wrap:wrap">
+          <input id="newPostTitle" placeholder="Post idea (e.g., Push-up DNA cues)">
+          <select id="newPostDay"><option value="1">Mon</option><option value="2">Tue</option><option value="3">Wed</option><option value="4">Thu</option><option value="5">Fri</option><option value="6">Sat</option><option value="7">Sun</option></select>
+          <button class="btn" id="addPost">Add to Calendar</button>
+        </div>
+      </section>
+
+      <!-- WRITING -->
+      <section id="sec-writing" class="section">
+        <div class="row">
+          <input id="docTitle" placeholder="Document title…" style="flex:1">
+          <button class="btn" id="shareDocBtn">📤 Share</button>
+          <button class="btn" id="toggleComments">💬 Comments</button>
+          <button class="btn primary" id="saveDoc">Save</button>
+        </div>
+        <div class="grid" style="grid-template-columns:1fr 340px;gap:12px;margin-top:8px">
+          <div id="editor" class="editor" contenteditable="true">Start writing… Select text, then add a comment on the right.</div>
+          <div class="comments hidden" id="commentsPanel">
+            <div class="row" style="justify-content:space-between">
+              <strong>Comments & Feedback</strong>
+              <select id="commentFilter">
+                <option value="all">All</option>
+                <option value="unresolved">Unresolved</option>
+                <option value="resolved">Resolved</option>
+              </select>
+            </div>
+            <div id="commentsList"></div>
+            <textarea id="newComment" style="width:100%;min-height:70px;margin-top:8px" placeholder="Add a comment… (use with a text selection)"></textarea>
+            <div class="row right"><button class="btn primary" id="addComment">Add</button></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- COLLAB -->
+      <section id="sec-collab" class="section">
+        <div class="row" style="justify-content:space-between">
+          <h4>Projects</h4>
+          <div class="row"><button class="btn" id="newProject">👥 New Project</button></div>
+        </div>
+        <div class="row" style="gap:8px;margin:8px 0">
+          <select id="fStatus"><option value="all">All</option><option value="active">Active</option><option value="review">In Review</option><option value="feedback">Feedback</option><option value="completed">Completed</option></select>
+          <select id="fSort"><option value="activity">Recent Activity</option><option value="newest">Newest</option><option value="oldest">Oldest</option></select>
+          <input id="fSearch" placeholder="Search…">
+        </div>
+        <div id="projects" class="grid" style="grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px"></div>
+        <div class="card" style="margin-top:10px">
+          <h4>Feedback Requests</h4>
+          <div id="feedbackList"></div>
+        </div>
+      </section>
+
+      <!-- ASSETS -->
+      <section id="sec-assets" class="section">
+        <div class="row" style="justify-content:space-between">
+          <h4>Asset Vault</h4>
+          <div class="row"><input id="assetFilter" placeholder="Filter…" /><button class="btn small" id="clearAssets">Clear</button></div>
+        </div>
+        <div id="drop" class="drop">Drag & drop files here (or <input id="assetPick" type="file" multiple>)</div>
+        <div id="assetList"></div>
+        <hr>
+        <h4>Video Analyzer (prototype)</h4>
+        <div class="row" style="gap:8px;flex-wrap:wrap">
+          <input id="vTitle" placeholder="Session title">
+          <input id="vFile" type="file" accept="video/*">
+          <button class="btn" id="vLoad">Load</button>
+        </div>
+        <video id="vPlayer" style="max-width:100%;margin-top:6px" controls class="hidden"></video>
+        <div class="row" style="gap:8px;margin-top:6px">
+          <input id="markNote" placeholder="Marker note…">
+          <button class="btn small" id="markAdd">+ Marker at current time</button>
+          <button class="btn small" id="markExport">Export markers → JSON</button>
+        </div>
+        <div id="markList" class="mono" style="white-space:pre-wrap;margin-top:6px"></div>
+        <div class="muted">Idea: pipe this JSON to Gemini for auto-outline & TODO extraction.</div>
+      </section>
+
+      <!-- AGENTS -->
+      <section id="sec-agents" class="section">
+        <div class="row" style="justify-content:space-between">
+          <h4>AI Hub</h4>
+          <div class="row"><button class="btn" id="cmdDeploy">deploy-hub</button><button class="btn" id="cmdLive">hub-live</button><button class="btn" id="cmdGit">hub-github</button></div>
+        </div>
+        <div class="grid" style="grid-template-columns:1fr 1fr">
+          <div class="card">
+            <h4>Prompt Studio — Program Generator</h4>
+            <textarea id="promptProgram" rows="10" class="mono" placeholder="System: You are a program design assistant...\nUser: Generate a 4-week push-pull program using the following Movement DNA JSON...\n"></textarea>
+            <div class="row right"><button class="btn primary" id="copyProgramPrompt">Copy Prompt</button></div>
+          </div>
+          <div class="card">
+            <h4>Router (demo)</h4>
+            <div class="kv"><span>Tasks:</span><span class="muted">writing • code • assets</span></div>
+            <div class="kv"><span>Next action:</span><span id="routerNext" class="mono">idle</span></div>
+            <div class="row" style="gap:8px;margin-top:8px"><button class="btn" id="routeFromTimeline">Use current Timeline as input</button></div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- SHARE MODAL -->
+  <div id="shareModal" class="modal">
+    <div class="box">
+      <div class="head"><strong>Share Document</strong><button class="btn ghost" id="closeShare">✕</button></div>
+      <div class="body">
+        <div class="row" style="gap:8px;flex-wrap:wrap">
+          <select id="shareMode"><option value="view">View</option><option value="comment">Comment</option><option value="edit">Edit</option></select>
+          <input id="shareEmails" placeholder="email1@example.com, email2@example.com" style="flex:1">
+        </div>
+        <textarea id="shareMsg" rows="3" placeholder="Message (optional)" style="margin-top:8px;width:100%"></textarea>
+        <div class="row" style="gap:8px;margin-top:8px"><input id="shareLink" readonly style="flex:1"><button class="btn" id="doShare">Generate Link</button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CHEAT SHEET MODAL -->
+  <div id="cheatModal" class="modal">
+    <div class="box">
+      <div class="head"><strong>Movement DNA — Cheat Sheet</strong><button class="btn ghost" id="closeCheat">✕</button></div>
+      <div class="body">
+        <div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px">
+          <div class="card"><strong>Push Horizontal</strong><span class="muted">Push‑ups, Ring push‑ups, Bench dips</span></div>
+          <div class="card"><strong>Push Vertical</strong><span class="muted">Pike, HSPU progressions</span></div>
+          <div class="card"><strong>Pull Horizontal</strong><span class="muted">Rows, Ring rows</span></div>
+          <div class="card"><strong>Pull Vertical</strong><span class="muted">Pull‑ups, Chin‑ups</span></div>
+          <div class="card"><strong>Hinge</strong><span class="muted">Hip hinge patterns</span></div>
+          <div class="card"><strong>Squat</strong><span class="muted">BW squat, Pistol progressions</span></div>
+          <div class="card"><strong>Core</strong><span class="muted">Hollow, Arch, L‑sit</span></div>
+          <div class="card"><strong>Carry/Bracing</strong><span class="muted">Unilateral carries, holds</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- COMMAND PALETTE -->
+  <div id="palette" class="palette">
+    <div class="box">
+      <header><input id="palInput" placeholder="Type a command… e.g., deploy-hub, hub-live, hub-github, outline, export"></header>
+      <div id="palList" class="list"></div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast"></div>
+
+<script>
+// -------- UTIL --------
+const $ = (q, el=document)=>el.querySelector(q);
+const $$= (q, el=document)=>Array.from(el.querySelectorAll(q));
+const toast=(msg)=>{const el=$("#toast"); el.textContent=msg; el.style.display="block"; setTimeout(()=>el.style.display="none",1800)};
+const store=(k,v)=>localStorage.setItem(k,JSON.stringify(v));
+const load=(k,def)=>JSON.parse(localStorage.getItem(k)||JSON.stringify(def));
+const go=(id)=>{ $$("#sidebar .item").forEach(i=>i.classList.toggle("active", i.dataset.goto===id)); $$(".section").forEach(s=>s.classList.remove("show")); $("#sec-"+id).classList.add("show"); };
+$$(".nav .item").forEach(i=>i.onclick=()=>go(i.dataset.goto));
+
+// Shortcuts
+document.addEventListener("keydown",(e)=>{
+  const k=(x)=>e.metaKey||e.ctrlKey ? e.key===x: false;
+  if(k("1")) go("dash");
+  if(k("2")) go("meta");
+  if(k("3")) go("sm");
+  if(k("4")) go("writing");
+  if(k("5")) go("collab");
+  if(k("6")) go("assets");
+  if(k("7")) go("agents");
+  if((e.metaKey||e.ctrlKey) && e.key.toLowerCase()==="k"){ e.preventDefault(); openPalette(); }
+});
+
+// ----- DASH KPIs -----
+function refreshKPIs(){
+  const lib = load("LIB", defaultLIB);
+  const TL  = load("TL_STATE", {});
+  const projects = load("PROJECTS", defaultProjects);
+  const doc = load("DOC", {title:"", body:""});
+  $("#kpiMoves").textContent = lib.length;
+  $("#kpiClips").textContent = Object.values(TL).reduce((a,x)=>a+(x?.length||0),0);
+  $("#kpiProjects").textContent = projects.length;
+  $("#kpiDrafts").textContent = doc.body ? 1 : 0;
+  $("#progMoves").style.width = Math.min(lib.length*5,100)+"%";
+  $("#progClips").style.width = Math.min($("#kpiClips").textContent*10,100)+"%";
+  $("#progProjects").style.width = Math.min(projects.length*10,100)+"%";
+  $("#progDrafts").style.width = doc.body ? "100%" : "10%";
+}
+$("#qaCheat").onclick=()=>$("#cheatModal").classList.add("show");
+$("#qaGenerateOutline").onclick=()=>outlineFromTimeline();
+
+// ----- META CONTROL -----
+const TRACKS=[{id:"t1",label:"Upper Push"},{id:"t2",label:"Upper Pull"},{id:"t3",label:"Core"},{id:"t4",label:"Lower Body"},{id:"t5",label:"Skill"}];
+let defaultLIB=[
+ {name:"Push-up",pattern:"Push Horizontal",category:"Basics"},
+ {name:"Ring Row",pattern:"Pull Horizontal",category:"Basics"},
+ {name:"Pike Push-up",pattern:"Push Vertical",category:"Strength"},
+ {name:"Pull-up",pattern:"Pull Vertical",category:"Strength"},
+ {name:"Bodyweight Squat",pattern:"Squat",category:"Basics"},
+ {name:"Hollow Hold",pattern:"Core",category:"Strength"},
+ {name:"L-Sit (tuck)",pattern:"Core",category:"Skill"}
+];
+let LIB = load("LIB", defaultLIB);
+let TL_STATE = load("TL_STATE", {});
+
+function drawTracks(){
+  const t=$("#tracks"); t.innerHTML="";
+  TRACKS.forEach(tr=>{
+    const row=document.createElement("div");
+    row.className="track"; row.dataset.track=tr.id;
+    row.innerHTML=`<div class='track-label'>${tr.label}</div><div class='lane' ondragover='event.preventDefault()'></div>`;
+    row.querySelector(".lane").ondrop=(e)=>{
+      const payload=JSON.parse(e.dataTransfer.getData("text/plain"));
+      addClip(tr.id,payload);
+    };
+    t.appendChild(row);
+  });
+  renderTimeline();
+}
+function renderTimeline(){
+  TRACKS.forEach(tr=>{
+    const lane=$(`.track[data-track='${tr.id}'] .lane`); if(!lane) return; lane.innerHTML="";
+    (TL_STATE[tr.id]||[]).forEach((c,idx)=>{
+      const key=`${tr.id}:${idx}`;
+      const node=document.createElement("div"); node.className="clip"; node.dataset.key=key;
+      node.onclick=()=>{ selectClip(key,c); };
+      node.innerHTML=`<b>${c.name}</b><div class='muted' style='font-size:12px'>${c.pattern}</div>`;
+      lane.appendChild(node);
+    });
+  });
+  refreshKPIs();
+}
+function addClip(trackId,m){
+  TL_STATE[trackId]=TL_STATE[trackId]||[]; TL_STATE[trackId].push({name:m.name,pattern:m.pattern,category:m.category});
+  store("TL_STATE",TL_STATE); renderTimeline();
+}
+let currentKey=null;
+function selectClip(key,c){
+  currentKey=key;
+  $$(".clip").forEach(n=>n.classList.remove("selected"));
+  $(`.clip[data-key='${key}']`)?.classList.add("selected");
+  $("#inspectorEmpty").classList.add("hidden");
+  $("#inspectorForm").classList.remove("hidden");
+  dna_name.value=c.name||""; dna_pattern.value=c.pattern||"Core"; dna_category.value=c.category||"Basics";
+  dna_rpe.value=c.rpe||""; dna_tempo.value=c.tempo||""; dna_sr.value=c.sr||""; dna_progression.value=c.progression||""; dna_antagonist.value=c.antagonist||""; dna_contra.value=c.contra||""; dna_tags.value=c.tags||""; dna_notes.value=c.notes||"";
+}
+$("#saveDNA").onclick=()=>{
+  if(!currentKey) return;
+  const [trackId,idx]=currentKey.split(":");
+  const arr=TL_STATE[trackId]||[]; const clip=arr[+idx];
+  Object.assign(clip,{name:dna_name.value,pattern:dna_pattern.value,category:dna_category.value,rpe:dna_rpe.value,tempo:dna_tempo.value,sr:dna_sr.value,progression:dna_progression.value,antagonist:dna_antagonist.value,contra:dna_contra.value,tags:dna_tags.value,notes:dna_notes.value});
+  store("TL_STATE",TL_STATE); renderTimeline(); toast("✅ DNA saved");
+};
+$("#clearTimeline").onclick=()=>{ TL_STATE={}; store("TL_STATE",TL_STATE); renderTimeline(); };
+$("#exportJSON").onclick=()=>downloadJSON("movement_timeline.json", TL_STATE);
+
+// Library
+function drawLib(filter=""){
+  const list=$("#movementList"); list.innerHTML="";
+  LIB.filter(m=>m.name.toLowerCase().includes(filter.toLowerCase())).forEach(m=>{
+    const el=document.createElement("div"); el.className="item"; el.draggable=true;
+    el.ondragstart=(e)=>e.dataTransfer.setData("text/plain",JSON.stringify(m));
+    el.innerHTML=`<span>${m.name}</span><span class='badge'>${m.pattern}</span>`;
+    list.appendChild(el);
+  });
+}
+drawLib();
+$("#libSearch").oninput=(e)=>drawLib(e.target.value);
+$("#importCSVBtn").onclick=()=>$("#csvInput").click();
+$("#csvInput").addEventListener("change",async(e)=>{
+  const file=e.target.files[0]; if(!file) return;
+  const txt=await file.text();
+  try{
+    let data=[];
+    if(file.name.endsWith(".json")) data=JSON.parse(txt);
+    else {
+      const rows=txt.split(/\r?\n/).filter(Boolean); const head=rows.shift().split(",").map(h=>h.trim().toLowerCase());
+      data=rows.map(r=>{const c=r.split(","); const o={}; head.forEach((h,i)=>o[h]=c[i]?.trim()); return {name:o.name||o.movement||"Move",pattern:o.pattern||"Core",category:o.category||"Basics",rpe:o.rpe,tempo:o.tempo,sr:o.sets_reps||o.sr,progression:o.progression,antagonist:o.antagonist,contra:o.contra};});
+    }
+    LIB=data; store("LIB",LIB); drawLib(); refreshKPIs(); toast("📥 Library imported");
+  }catch(err){ toast("❌ Import failed"); }
+});
+$("#postStub").onclick=()=>log(`POST /movements — ${LIB.length} items (stub)`);
+
+// Preview attach
+$("#prevFile").addEventListener("change",(e)=>{
+  const f=e.target.files[0]; if(!f) return;
+  const area=$("#prevArea"); area.innerHTML="";
+  if(f.type.startsWith("image/")){ const img=document.createElement("img"); img.style.maxWidth="100%"; img.src=URL.createObjectURL(f); area.appendChild(img); }
+  if(f.type.startsWith("video/")){ const vid=document.createElement("video"); vid.controls=true; vid.style.maxWidth="100%"; vid.src=URL.createObjectURL(f); area.appendChild(vid); }
+});
+
+function outlineFromTimeline(){
+  const blocks=Object.entries(TL_STATE).flatMap(([k,arr],ti)=> (arr||[]).map((c,ci)=>({track:k, index:ci, ...c})));
+  if(!blocks.length){ toast("Timeline empty"); return; }
+  const lines=["# Session Outline","", ...blocks.map((b,i)=>`${i+1}. ${b.name} — ${b.pattern}${b.sr?` — ${b.sr}`:""} ${b.rpe?`(RPE ${b.rpe})`:""}`)];
+  go("writing");
+  $("#docTitle").value="Auto‑Outline from Timeline";
+  $("#editor").innerHTML=lines.join("<br>");
+  $("#commentsPanel").classList.remove("hidden");
+  toast("🧠 Outline sent to Writing");
+}
+$("#outlineFromTimeline").onclick=outlineFromTimeline;
+
+// ----- SM LAB -----
+const days=["","Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
+function drawCal(){
+  const grid=$("#calGrid"); grid.innerHTML="";
+  days.forEach((d,i)=>{
+    const cell=document.createElement("div"); cell.className="cell"+(i===0?" hdr":"");
+    cell.textContent = i===0 ? "Day" : d;
+    grid.appendChild(cell);
+  });
+  for(let r=0;r<4;r++){
+    const hdr=document.createElement("div"); hdr.className="cell hdr"; hdr.textContent="Week "+(r+1); grid.appendChild(hdr);
+    for(let c=1;c<=7;c++){
+      const cell=document.createElement("div"); cell.className="cell"; cell.dataset.day=c; cell.dataset.week=r+1;
+      const list=document.createElement("div"); list.className="posts"; cell.appendChild(list);
+      grid.appendChild(cell);
+    }
+  }
+  const cal=load("SM_CAL",[]);
+  cal.forEach(p=>addPostToGrid(p));
+}
+function addPostToGrid(p){
+  const cell=$(`.cell[data-week='${p.week}'][data-day='${p.day}'] .posts`); if(!cell) return;
+  const el=document.createElement("div"); el.className="post"; el.innerHTML=`<strong>${p.title}</strong><div class="muted">${p.platform}</div>`;
+  cell.appendChild(el);
+}
+drawCal();
+$("#addPost").onclick=()=>{
+  const title=$("#newPostTitle").value.trim(); if(!title) return;
+  const day=+$("#newPostDay").value; const platform=$("#smPlatform").value;
+  const week = 1 + Math.floor(Math.random()*4);
+  const post={id:Date.now(), title, day, week, platform};
+  const cal=load("SM_CAL",[]); cal.push(post); store("SM_CAL",cal); addPostToGrid(post); $("#newPostTitle").value=""; toast("🗓️ Added to calendar");
+};
+$("#exportCal").onclick=()=>downloadJSON("sm_calendar.json", load("SM_CAL",[]));
+
+// ----- WRITING + COMMENTS -----
+const commentKey="COMMENTS_STORE";
+const editor=$("#editor");
+const selInEditor=()=>{const s=window.getSelection(); if(!s.rangeCount) return null; const r=s.getRangeAt(0); if(!editor.contains(r.commonAncestorContainer)) return null; return r};
+$("#toggleComments").onclick=()=>$("#commentsPanel").classList.toggle("hidden");
+$("#addComment").onclick=()=>{
+  const txt=$("#newComment").value.trim(); if(!txt) return;
+  const r=selInEditor(); const id=Date.now().toString();
+  if(r && !r.collapsed){ const span=document.createElement("mark"); span.className="hl"; span.dataset.cid=id; r.surroundContents(span); }
+  const arr=load(commentKey,[]); arr.push({id,text:txt,created:new Date().toISOString(),resolved:false}); store(commentKey,arr); $("#newComment").value=""; renderComments();
+};
+$("#commentFilter").onchange=renderComments;
+function renderComments(){
+  const list=$("#commentsList"); list.innerHTML="";
+  const arr=load(commentKey,[]); const f=$("#commentFilter").value;
+  arr.filter(c=>f==="all"||(f==="resolved"?c.resolved:!c.resolved)).forEach(c=>{
+    const d=document.createElement("div"); d.className="card";
+    d.innerHTML=`<div class="row" style="justify-content:space-between"><strong>${c.resolved?'✅':''} Comment</strong><small>${new Date(c.created).toLocaleString()}</small></div><div style="margin-top:6px">${c.text}</div><div class="row right" style="gap:6px;margin-top:6px"><button class="btn small ghost" data-id="${c.id}" data-act="jump">Go</button><button class="btn small ghost" data-id="${c.id}" data-act="toggle">${c.resolved?'Reopen':'Resolve'}</button><button class="btn small ghost" data-id="${c.id}" data-act="del">Delete</button></div>`;
+    list.appendChild(d);
+  });
+  $$("#commentsList button").forEach(b=>b.onclick=()=>{
+    const arr=load(commentKey,[]); const id=b.dataset.id; const act=b.dataset.act; const i=arr.findIndex(x=>x.id===id); if(i<0) return;
+    if(act==="toggle"){arr[i].resolved=!arr[i].resolved; editor.querySelectorAll(`mark.hl[data-cid='${id}']`).forEach(m=>m.classList.toggle("resolved",arr[i].resolved));}
+    if(act==="del"){ editor.querySelectorAll(`mark.hl[data-cid='${id}']`).forEach(m=>{const p=m.parentNode; while(m.firstChild)p.insertBefore(m.firstChild,m); p.removeChild(m);}); arr.splice(i,1);}
+    if(act==="jump"){ const t=editor.querySelector(`mark.hl[data-cid='${id}']`); if(t){ t.scrollIntoView({behavior:"smooth",block:"center"}); }}
+    store(commentKey,arr); renderComments();
+  });
+}
+renderComments();
+$("#saveDoc").onclick=()=>{ const doc={title:$("#docTitle").value, body:editor.innerHTML, updated:new Date().toISOString()}; store("DOC",doc); refreshKPIs(); toast("💾 Saved"); };
+
+// Share modal
+$("#shareDocBtn").onclick=()=>$("#shareModal").classList.add("show");
+$("#closeShare").onclick=()=>$("#shareModal").classList.remove("show");
+$("#doShare").onclick=()=>{ const id=Math.random().toString(36).slice(2,10); $("#shareLink").value=`https://saturno-writing-hub.com/share/${id}`; toast("🔗 Share link ready (demo)"); };
+
+// ----- COLLAB -----
+const defaultProjects=[
+  {id:"c1",title:"Movement Ecosystem Book Outline",desc:"Book outline + chapter structure",owner:"Gabo Saturno",status:"active",created:"2025-06-10T09:00:00Z",last:"2025-06-17T14:30:00Z",comments:12},
+  {id:"c2",title:"Philosophical Movement Integration",desc:"Draft article connecting philosophy to practice",owner:"Jane Editor",status:"review",created:"2025-06-12T11:20:00Z",last:"2025-06-18T09:15:00Z",comments:8},
+  {id:"c3",title:"Movement as Consciousness — Chapter Feedback",desc:"Chapter review & feedback",owner:"Publisher Team",status:"feedback",created:"2025-06-05T15:45:00Z",last:"2025-06-18T10:00:00Z",comments:15}
+];
+if(!localStorage.getItem("PROJECTS")) store("PROJECTS",defaultProjects);
+function drawProjects(){
+  const root=$("#projects"); root.innerHTML="";
+  const q=$("#fSearch").value.toLowerCase(); const st=$("#fStatus").value; const sort=$("#fSort").value;
+  let arr=load("PROJECTS",[]);
+  if(st!=="all") arr=arr.filter(p=>p.status===st);
+  if(q) arr=arr.filter(p=>p.title.toLowerCase().includes(q)||p.desc.toLowerCase().includes(q));
+  arr.sort((a,b)=> sort==="newest"? new Date(b.created)-new Date(a.created): sort==="oldest"? new Date(a.created)-new Date(b.created): new Date(b.last)-new Date(a.last));
+  arr.forEach(p=>{
+    const card=document.createElement("div"); card.className="card";
+    card.innerHTML=`<div class="row" style="justify-content:space-between;align-items:center"><strong>${p.title}</strong><span class="badge">${p.status}</span></div><div class="muted">Owner: ${p.owner}</div><div>${p.desc}</div><div class="muted">Last: ${new Date(p.last).toLocaleString()}</div><div class="row right" style="gap:8px"><button class="btn small ghost" data-id="${p.id}" data-act="open">Open</button><button class="btn small primary" data-id="${p.id}" data-act="write">Open in Writing</button></div>`;
+    root.appendChild(card);
+  });
+  $$("#projects button").forEach(b=>b.onclick=()=>{
+    const id=b.dataset.id; const act=b.dataset.act; const arr=load("PROJECTS",[]); const p=arr.find(x=>x.id===id);
+    if(act==="open"){ toast("👀 Project view coming next"); }
+    if(act==="write"){ go("writing"); $("#docTitle").value=p.title; editor.innerHTML=`# ${p.title}<br><br>${p.desc}<br><br>Use comments on the right.`; $("#commentsPanel").classList.remove("hidden"); }
+  });
+
+  // feedback
+  const fb=[
+    {id:"f1",title:"Chapter 2: Movement Patterns",from:"Editor Jane",requested:"2025-06-18T08:30:00Z",due:"2025-06-25",msg:"Please review technical accuracy of movement descriptions.",status:"pending"},
+    {id:"f2",title:"Embodied Philosophy Article",from:"Mark Writer",requested:"2025-06-17T14:15:00Z",due:"2025-06-23",msg:"Need your expert input on the philosophical integration.",status:"pending"}
+  ];
+  const list=$("#feedbackList"); list.innerHTML="";
+  fb.filter(f=>f.status==="pending").forEach(r=>{
+    const row=document.createElement("div"); row.className="card";
+    row.innerHTML=`<div class="row" style="justify-content:space-between;align-items:center"><div><strong>${r.title}</strong><div class="muted">From: ${r.from} • Requested: ${new Date(r.requested).toLocaleDateString()} • Due: ${new Date(r.due).toLocaleDateString()}</div><div style="margin-top:6px">${r.msg}</div></div><div class="row" style="gap:6px"><button class="btn small ghost" data-id="${r.id}" data-act="decline">Decline</button><button class="btn small primary" data-id="${r.id}" data-act="accept">Review</button></div></div>`;
+    list.appendChild(row);
+  });
+  $$("#feedbackList button").forEach(b=>b.onclick=()=>{
+    const id=b.dataset.id; const act=b.dataset.act;
+    if(act==="decline"){ toast("✅ Declined"); }
+    if(act==="accept"){ toast("✅ Accepted — opening document"); go("writing"); $("#docTitle").value="Review: "+id; editor.innerHTML=`# ${id}<br><br>Use the comments to leave feedback.`; $("#commentsPanel").classList.remove("hidden"); }
+  });
+}
+["fStatus","fSort","fSearch"].forEach(id=>$( "#"+id ).addEventListener("input",drawProjects));
+drawProjects();
+
+// ----- ASSETS & VIDEO ANALYZER -----
+const drop=$("#drop"), pick=$("#assetPick"), list=$("#assetList");
+function addAssets(files){
+  const assets=load("ASSETS",[]);
+  [...files].forEach(f=>assets.push({id:Date.now()+Math.random(), name:f.name, size:f.size}));
+  store("ASSETS",assets); drawAssets();
+}
+function drawAssets(){
+  const q=$("#assetFilter").value.toLowerCase();
+  const assets=load("ASSETS",[]).filter(a=>a.name.toLowerCase().includes(q));
+  list.innerHTML="";
+  assets.forEach(a=>{
+    const row=document.createElement("div"); row.className="asset";
+    row.innerHTML=`<span>${a.name} <span class="muted">(${Math.round(a.size/1024)} KB)</span></span><button class="btn small ghost" data-id="${a.id}">Remove</button>`;
+    list.appendChild(row);
+  });
+  $$("#assetList button").forEach(b=>b.onclick=()=>{
+    let assets=load("ASSETS",[]); assets=assets.filter(x=>x.id!=b.dataset.id); store("ASSETS",assets); drawAssets();
+  });
+}
+drawAssets();
+drop.ondragover=(e)=>{e.preventDefault(); drop.style.background="rgba(39,81,111,.25)";};
+drop.ondragleave=()=>drop.style.background="rgba(39,81,111,.15)";
+drop.ondrop=(e)=>{e.preventDefault(); drop.style.background="rgba(39,81,111,.15)"; addAssets(e.dataTransfer.files);};
+pick.onchange=(e)=>addAssets(e.target.files);
+$("#assetFilter").oninput=drawAssets;
+$("#clearAssets").onclick=()=>{ store("ASSETS",[]); drawAssets(); };
+
+// Video analyzer
+const v=$("#vPlayer");
+$("#vLoad").onclick=()=>{
+  const f=$("#vFile").files[0]; if(!f){toast("Pick a video"); return;}
+  v.src=URL.createObjectURL(f); v.classList.remove("hidden"); v.load(); v.play(); toast("🎞️ Video loaded");
+};
+$("#markAdd").onclick=()=>{
+  if(v.classList.contains("hidden")) return;
+  const t=v.currentTime; const note=$("#markNote").value||"marker";
+  const set=load("V_MARKS",[]); set.push({time: +t.toFixed(2), note}); store("V_MARKS",set); renderMarks();
+  $("#markNote").value="";
+};
+function renderMarks(){
+  const set=load("V_MARKS",[]); $("#markList").textContent=JSON.stringify(set,null,2);
+}
+renderMarks();
+$("#markExport").onclick=()=>downloadJSON("video_markers.json", load("V_MARKS",[]));
+
+// ----- AGENTS / ROUTER -----
+$("#copyProgramPrompt").onclick=()=>{
+  const json=TL_STATE; $("#promptProgram").value += "\n\nMovement DNA JSON:\n"+JSON.stringify(json,null,2);
+  navigator.clipboard.writeText($("#promptProgram").value); toast("📋 Prompt copied");
+};
+$("#routeFromTimeline").onclick=()=>{ $("#routerNext").textContent="program:generate_from_timeline"; };
+["cmdDeploy","cmdLive","cmdGit"].forEach(id=>$("#"+id).onclick=()=>runCommand($("#"+id).textContent));
+
+// ----- COMMAND PALETTE -----
+const palette=$("#palette"); const palInput=$("#palInput"); const palList=$("#palList");
+function openPalette(){ palette.classList.add("show"); palInput.value=""; palInput.focus(); renderPalList(""); }
+$("#openPalette").onclick=openPalette;
+palette.addEventListener("click",(e)=>{ if(e.target===palette) palette.classList.remove("show"); });
+document.addEventListener("keydown",(e)=>{ if(e.key==="Escape") palette.classList.remove("show"); });
+palInput.addEventListener("input",(e)=>renderPalList(e.target.value.toLowerCase()));
+function renderPalList(q){
+  const cmds=[
+    {id:"deploy-hub", hint:"Build & push to GitHub Pages (stub)"},
+    {id:"hub-live", hint:"Open public site (stub)"},
+    {id:"hub-github", hint:"Open repo (stub)"},
+    {id:"outline", hint:"Generate outline from timeline"},
+    {id:"export", hint:"Export all JSON"}
+  ].filter(c=>c.id.includes(q)||c.hint.toLowerCase().includes(q));
+  palList.innerHTML="";
+  cmds.forEach(c=>{
+    const row=document.createElement("div"); row.className="cmd"; row.innerHTML=`<span><strong>${c.id}</strong> — <span class="muted">${c.hint}</span></span><span class="kbd mono">enter</span>`;
+    row.onclick=()=>{ runCommand(c.id); palette.classList.remove("show"); };
+    palList.appendChild(row);
+  });
+}
+function runCommand(cmd){
+  if(cmd==="deploy-hub") log("$ deploy-hub\n→ building… (demo)\n→ pushed to GitHub Pages");
+  if(cmd==="hub-live")  log("$ hub-live\n→ opening https://gabosaturno11.github.io/AI-Hub/");
+  if(cmd==="hub-github")log("$ hub-github\n→ opening repository");
+  if(cmd==="outline") outlineFromTimeline();
+  if(cmd==="export") exportAll();
+}
+function log(s){ const el=$("#cmdLog"); el.textContent += "\n"+s; el.scrollTop=el.scrollHeight; toast("⚡ "+s.split("\n")[0]); }
+
+// ----- EXPORT / SAVE ALL -----
+$("#saveAll").onclick=()=>{ store("LIB",LIB); store("TL_STATE",TL_STATE); toast("💾 Saved all"); refreshKPIs(); };
+$("#exportAll").onclick=exportAll;
+function exportAll(){
+  const data={LIB, TL_STATE, SM_CAL:load("SM_CAL",[]), DOC:load("DOC",{}), PROJECTS:load("PROJECTS",[]), V_MARKS:load("V_MARKS",[])};
+  downloadJSON("saturno_hub_export.json", data);
+}
+function downloadJSON(name,obj){
+  const blob=new Blob([JSON.stringify(obj,null,2)],{type:"application/json"});
+  const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download=name; a.click();
+}
+
+// Init
+drawTracks(); drawLib(); drawCal(); refreshKPIs();
+</script>
+</body>
+</html>
