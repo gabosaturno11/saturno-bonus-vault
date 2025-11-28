@@ -193,6 +193,58 @@
         }
 
         .stat-label {
+        .vault-highlight {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 32px 36px;
+            margin: -20px auto 40px;
+            max-width: 1100px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 32px;
+        }
+
+        .vault-highlight h2 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .vault-highlight p {
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+        }
+
+        .vault-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .vault-list li {
+            display: flex;
+            gap: 10px;
+            align-items: flex-start;
+            color: var(--text-secondary);
+            line-height: 1.4;
+        }
+
+        .vault-list li span {
+            font-size: 1rem;
+        }
+
+        .vault-cta {
+            margin-top: 16px;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
             font-size: 0.9rem;
             color: var(--text-muted);
             text-transform: uppercase;
@@ -888,8 +940,8 @@
             <span>🎉</span>
             <span>Black Friday Exclusive Access</span>
         </div>
-        <h1>Your Handstand Mastery Vault</h1>
-        <p>Unlock the complete collection of programs, routines, guides, and interactive tools to transform your handstand practice.</p>
+        <h1>The Handstand + Movement Vault</h1>
+        <p>The entire Saturno OS in one drop — Handstand OS, Press / Upper / Lower templates, 100+ training pages, AI coaching systems, and interactive tools ready to sell.</p>
         <div class="hero-stats">
             <div class="stat">
                 <div class="stat-value">19</div>
@@ -907,6 +959,33 @@
                 <div class="stat-value">∞</div>
                 <div class="stat-label">Lifetime Access</div>
             </div>
+        </div>
+    </section>
+
+    <section class="vault-highlight">
+        <div>
+            <h2>Handstand Product Stack</h2>
+            <p>Programs, templates, and vault assets pre-built with the TLC system.</p>
+            <ul class="vault-list">
+                <li><span>🧠</span>Handstand OS (6-week TLC) + Press / Upper / Lower / Mobility / Fundamentals templates</li>
+                <li><span>⚡</span>CF3 blueprints and mini-programs for fast outcomes</li>
+                <li><span>🤸</span>Arm Balance PDF (scorpion, crow, baby crow, 8-angle +2)</li>
+                <li><span>📘</span>Biomechanics Handstand Ebook + bonus lectures</li>
+                <li><span>📂</span>100 training HTML pages, routines, and session scripts</li>
+            </ul>
+            <a class="vault-cta" href="content/index.html" target="_blank">Browse the Training Library →</a>
+        </div>
+        <div>
+            <h2>AI + Coaching Systems</h2>
+            <p>Operational templates to sell coaching offers or license to other pros.</p>
+            <ul class="vault-list">
+                <li><span>🧩</span>Saturno Coaching Program Template V1 + Client Programs OS (Notion)</li>
+                <li><span>🛰️</span>Bogdana Intelligence Engine template (automation + onboarding)</li>
+                <li><span>🎯</span>Prompt Vaults + AI coordination starter kit with agents/workflows</li>
+                <li><span>🎛️</span>Interactive tools stack (Saturno Master Hub, Writing Hubs, Mind Maps)</li>
+                <li><span>🎧</span>Music vault placeholder + webinar countdown → thank-you → bonus flow</li>
+            </ul>
+            <a class="vault-cta" href="#apps">Launch the Interactive Apps →</a>
         </div>
     </section>
 

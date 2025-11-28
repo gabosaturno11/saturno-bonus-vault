@@ -740,9 +740,11 @@
 
     <script>
         // Countdown Timer
+        const webinarTarget = new Date('2025-11-29T15:00:00-05:00'); // Explicit 3:00 PM EST
+
         function updateCountdown() {
-            // Set your webinar date here (November 29, 2025, 3:00 PM EST)
-            const webinarDate = new Date('2025-11-29T20:00:00Z').getTime(); // 3:00 PM EST = 8:00 PM UTC
+            // Countdown to webinar date (3:00 PM EST / 8:00 PM UTC)
+            const webinarDate = webinarTarget.getTime();
             const now = new Date().getTime();
             const distance = webinarDate - now;
 
