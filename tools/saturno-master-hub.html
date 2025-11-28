@@ -1,0 +1,1182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Saturno Empire Consolidation Hub - Voice Enabled</title>
+    <style>
+        :root {
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #141414;
+            --bg-tertiary: #1e1e1e;
+            --text-primary: #ffffff;
+            --text-secondary: #cccccc;
+            --text-muted: #888888;
+            --accent: #00ff88;
+            --accent-dim: #00cc66;
+            --border: #333333;
+            --glass: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .empire-container {
+            display: grid;
+            grid-template-columns: 300px 1fr 350px;
+            grid-template-rows: 50px 1fr;
+            height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            grid-column: 1 / -1;
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+        }
+
+        .logo {
+            color: var(--accent);
+            font-weight: 700;
+            font-size: 16px;
+        }
+
+        .voice-control {
+            position: relative;
+        }
+
+        .voice-btn {
+            width: 36px;
+            height: 36px;
+            border: none;
+            border-radius: 50%;
+            background: var(--bg-tertiary);
+            color: var(--text-secondary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .voice-btn:hover {
+            background: var(--accent-dim);
+            color: var(--bg-primary);
+        }
+
+        .voice-btn.listening {
+            background: var(--accent);
+            color: var(--bg-primary);
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .voice-status {
+            position: absolute;
+            top: 45px;
+            right: 0;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 8px 12px;
+            font-size: 12px;
+            white-space: nowrap;
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .voice-status.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .header-controls {
+            display: flex;
+            gap: 8px;
+        }
+
+        .header-btn {
+            padding: 6px 12px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            color: var(--text-secondary);
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .header-btn:hover {
+            background: var(--border);
+            color: var(--text-primary);
+        }
+
+        /* Left Panel - Asset Browser */
+        .asset-browser {
+            background: var(--bg-secondary);
+            border-right: 1px solid var(--border);
+            overflow-y: auto;
+        }
+
+        .panel-header {
+            padding: 16px;
+            border-bottom: 1px solid var(--border);
+            background: var(--bg-tertiary);
+        }
+
+        .panel-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .panel-subtitle {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .asset-section {
+            padding: 16px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .section-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--accent);
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .asset-item {
+            padding: 8px 12px;
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 4px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .asset-item:hover {
+            background: var(--bg-tertiary);
+            border-color: var(--border);
+        }
+
+        .asset-name {
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-primary);
+            margin-bottom: 2px;
+        }
+
+        .asset-desc {
+            font-size: 10px;
+            color: var(--text-muted);
+        }
+
+        /* Center - Main Workspace */
+        .main-workspace {
+            display: flex;
+            flex-direction: column;
+            background: var(--bg-primary);
+        }
+
+        .workspace-tabs {
+            display: flex;
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .tab {
+            padding: 12px 20px;
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-size: 13px;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .tab.active {
+            color: var(--text-primary);
+            border-bottom-color: var(--accent);
+        }
+
+        .workspace-content {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Editor Mode */
+        .editor-mode {
+            height: 100%;
+            display: none;
+            flex-direction: column;
+        }
+
+        .editor-mode.active {
+            display: flex;
+        }
+
+        .editor-toolbar {
+            padding: 12px 20px;
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .document-title {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: var(--text-primary);
+            font-size: 16px;
+            font-weight: 600;
+            outline: none;
+        }
+
+        .editor-area {
+            flex: 1;
+            padding: 20px;
+        }
+
+        .main-editor {
+            width: 100%;
+            height: 100%;
+            background: transparent;
+            border: none;
+            color: var(--text-primary);
+            font-size: 14px;
+            line-height: 1.6;
+            outline: none;
+            resize: none;
+            font-family: inherit;
+        }
+
+        /* Preview Mode */
+        .preview-mode {
+            height: 100%;
+            display: none;
+            grid-template-columns: 1fr 1fr;
+            gap: 1px;
+            background: var(--border);
+        }
+
+        .preview-mode.active {
+            display: grid;
+        }
+
+        .preview-panel {
+            background: var(--bg-primary);
+            overflow: hidden;
+        }
+
+        .preview-header {
+            padding: 12px 16px;
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border);
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .preview-iframe {
+            width: 100%;
+            height: calc(100% - 41px);
+            border: none;
+        }
+
+        /* Assets Grid Mode */
+        .assets-mode {
+            height: 100%;
+            display: none;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .assets-mode.active {
+            display: block;
+        }
+
+        .assets-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 16px;
+        }
+
+        .asset-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .asset-card:hover {
+            border-color: var(--accent-dim);
+            transform: translateY(-2px);
+        }
+
+        .asset-preview {
+            height: 160px;
+            background: var(--bg-tertiary);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .asset-preview iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            transform: scale(0.7);
+            transform-origin: top left;
+            pointer-events: none;
+        }
+
+        .asset-card-content {
+            padding: 12px;
+        }
+
+        .asset-card-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .asset-card-desc {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+
+        .asset-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .asset-btn {
+            padding: 4px 8px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 3px;
+            color: var(--text-secondary);
+            font-size: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .asset-btn:hover {
+            background: var(--accent-dim);
+            color: var(--bg-primary);
+        }
+
+        /* Right Panel - Active Tools */
+        .tools-panel {
+            background: var(--bg-secondary);
+            border-left: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .tool-section {
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .tool-content {
+            padding: 16px;
+        }
+
+        .prompt-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .prompt-item {
+            padding: 12px;
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .prompt-item:hover {
+            background: var(--bg-tertiary);
+            border-color: var(--border);
+        }
+
+        .prompt-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .prompt-preview {
+            font-size: 10px;
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
+
+        /* Stats */
+        .stats-bar {
+            position: absolute;
+            bottom: 16px;
+            right: 16px;
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 4px;
+            padding: 6px 12px;
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        /* Notification */
+        .notification {
+            position: fixed;
+            top: 16px;
+            right: 16px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 12px 16px;
+            font-size: 12px;
+            color: var(--text-primary);
+            z-index: 2000;
+            opacity: 0;
+            transform: translateX(100%);
+            transition: all 0.3s ease;
+        }
+
+        .notification.show {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .notification.success {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .notification.error {
+            border-color: #ff4444;
+            color: #ff4444;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-primary);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-dim);
+        }
+    </style>
+</head>
+<body>
+    <div class="empire-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">🪐 SATURNO EMPIRE HUB</div>
+            <div class="voice-control">
+                <button class="voice-btn" id="voiceBtn" title="Voice Commands">🎤</button>
+                <div class="voice-status" id="voiceStatus">Ready...</div>
+            </div>
+            <div class="header-controls">
+                <button class="header-btn" onclick="saveWork()">💾 Save</button>
+                <button class="header-btn" onclick="deployProject()">🚀 Deploy</button>
+                <button class="header-btn" onclick="exportAll()">📦 Export</button>
+            </div>
+        </header>
+
+        <!-- Left Panel - Asset Browser -->
+        <div class="asset-browser">
+            <div class="panel-header">
+                <div class="panel-title">Digital Assets</div>
+                <div class="panel-subtitle">Your 22+ HTML Projects</div>
+            </div>
+
+            <div class="asset-section">
+                <div class="section-title">Writing Hubs</div>
+                <div class="asset-item" onclick="loadAsset('saturno-os')">
+                    <div class="asset-name">Saturno OS Hub</div>
+                    <div class="asset-desc">Dark writing interface</div>
+                </div>
+                <div class="asset-item" onclick="loadAsset('unified-hub')">
+                    <div class="asset-name">Unified Writing Hub</div>
+                    <div class="asset-desc">Master system</div>
+                </div>
+                <div class="asset-item" onclick="loadAsset('focus-mode')">
+                    <div class="asset-name">Focus Writing System</div>
+                    <div class="asset-desc">Distraction-free mode</div>
+                </div>
+            </div>
+
+            <div class="asset-section">
+                <div class="section-title">Movement Apps</div>
+                <div class="asset-item" onclick="loadAsset('movement-lab')">
+                    <div class="asset-name">Movement Lab</div>
+                    <div class="asset-desc">Practice workstation</div>
+                </div>
+                <div class="asset-item" onclick="loadAsset('calisthenics-hub')">
+                    <div class="asset-name">Calisthenics Hub</div>
+                    <div class="asset-desc">Training system</div>
+                </div>
+            </div>
+
+            <div class="asset-section">
+                <div class="section-title">Business Tools</div>
+                <div class="asset-item" onclick="loadAsset('prompt-vault')">
+                    <div class="asset-name">Prompt Vault</div>
+                    <div class="asset-desc">MSOPM systems</div>
+                </div>
+                <div class="asset-item" onclick="loadAsset('ecosystem-dashboard')">
+                    <div class="asset-name">Ecosystem Dashboard</div>
+                    <div class="asset-desc">Command center</div>
+                </div>
+                <div class="asset-item" onclick="loadAsset('ai-arsenal')">
+                    <div class="asset-name">AI Arsenal</div>
+                    <div class="asset-desc">Team management</div>
+                </div>
+            </div>
+
+            <div class="asset-section">
+                <div class="section-title">Victory Belt</div>
+                <div class="asset-item" onclick="loadDocument('toc')">
+                    <div class="asset-name">Complete TOC</div>
+                    <div class="asset-desc">20 chapters outlined</div>
+                </div>
+                <div class="asset-item" onclick="loadDocument('chapter1')">
+                    <div class="asset-name">Chapter 1 Draft</div>
+                    <div class="asset-desc">Philosophy of Movement</div>
+                </div>
+                <div class="asset-item" onclick="loadDocument('chapter2')">
+                    <div class="asset-name">Chapter 2 Draft</div>
+                    <div class="asset-desc">Foundation Building</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Center - Main Workspace -->
+        <div class="main-workspace">
+            <div class="workspace-tabs">
+                <button class="tab active" onclick="switchMode('editor')">✍️ Editor</button>
+                <button class="tab" onclick="switchMode('preview')">👁️ Preview</button>
+                <button class="tab" onclick="switchMode('assets')">🎨 Assets</button>
+            </div>
+
+            <div class="workspace-content">
+                <!-- Editor Mode -->
+                <div class="editor-mode active" id="editorMode">
+                    <div class="editor-toolbar">
+                        <input type="text" class="document-title" id="documentTitle" placeholder="Document title..." />
+                    </div>
+                    <div class="editor-area">
+                        <textarea class="main-editor" id="mainEditor" placeholder="🎤 Start writing or use voice commands:
+
+'Load chapter 1' - Load Victory Belt chapter
+'Insert confident humility' - Add prompt 
+'Preview movement lab' - View HTML asset
+'Deploy to vercel' - Deploy command
+
+Clean text rendering - no markdown artifacts."></textarea>
+                        <div class="stats-bar" id="statsBar">Words: 0 | Characters: 0</div>
+                    </div>
+                </div>
+
+                <!-- Preview Mode -->
+                <div class="preview-mode" id="previewMode">
+                    <div class="preview-panel">
+                        <div class="preview-header">Document Preview</div>
+                        <iframe class="preview-iframe" id="docPreview"></iframe>
+                    </div>
+                    <div class="preview-panel">
+                        <div class="preview-header">Asset Preview</div>
+                        <iframe class="preview-iframe" id="assetPreview"></iframe>
+                    </div>
+                </div>
+
+                <!-- Assets Grid Mode -->
+                <div class="assets-mode" id="assetsMode">
+                    <div class="assets-grid" id="assetsGrid">
+                        <!-- Assets will be populated here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Panel - Tools -->
+        <div class="tools-panel">
+            <div class="panel-header">
+                <div class="panel-title">Active Tools</div>
+                <div class="panel-subtitle">Voice-activated prompts</div>
+            </div>
+            
+            <div class="tool-section">
+                <div class="tool-content">
+                    <div class="section-title">Quick Prompts</div>
+                    <div class="prompt-list" id="promptList">
+                        <div class="prompt-item" onclick="insertPrompt('confident-humility')">
+                            <div class="prompt-title">Confident Humility</div>
+                            <div class="prompt-preview">Authority through expertise, not defensiveness</div>
+                        </div>
+                        <div class="prompt-item" onclick="insertPrompt('msopm')">
+                            <div class="prompt-title">MSOPM Framework</div>
+                            <div class="prompt-preview">Modular prompt optimization</div>
+                        </div>
+                        <div class="prompt-item" onclick="insertPrompt('ai-legion')">
+                            <div class="prompt-title">AI Legion</div>
+                            <div class="prompt-preview">60-90min content pipeline</div>
+                        </div>
+                        <div class="prompt-item" onclick="insertPrompt('voice-style')">
+                            <div class="prompt-title">Gabo Voice</div>
+                            <div class="prompt-preview">Rhythmic writing style</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification -->
+    <div class="notification" id="notification"></div>
+
+    <script>
+        // State Management
+        let currentMode = 'editor';
+        let isListening = false;
+        let recognition = null;
+        let wordCount = 0;
+        let charCount = 0;
+
+        // Asset Data
+        const assetUrls = {
+            'saturno-os': 'https://saturno-os-hub.vercel.app/',
+            'movement-lab': 'data:text/html,<div style="padding:20px;background:linear-gradient(135deg,#1a1a2e 0%,#7209b7 100%);color:white;text-align:center;font-family:Inter;min-height:300px;display:flex;align-items:center;justify-content:center;flex-direction:column;"><h2>🏗️ Movement Lab</h2><p>Professional Practice Workstation</p><div style="background:rgba(255,255,255,0.1);padding:15px;border-radius:8px;margin:20px 0;width:80%;"><div style="font-size:12px;margin-bottom:10px;">Timeline Sequencing</div><div style="display:flex;gap:5px;"><div style="background:#8b5cf6;height:20px;width:15%;border-radius:3px;"></div><div style="background:#3b82f6;height:20px;width:20%;border-radius:3px;"></div><div style="background:#10b981;height:20px;width:25%;border-radius:3px;"></div></div></div></div>',
+            'ecosystem-dashboard': 'data:text/html,<div style="padding:20px;background:radial-gradient(circle,#2d1b4e 0%,#6b3fa0 100%);color:white;text-align:center;font-family:Inter;min-height:300px;display:flex;align-items:center;justify-content:center;flex-direction:column;"><h2>🪐 Digital Empire</h2><p>Command Center Dashboard</p><div style="display:flex;justify-content:space-around;margin:20px 0;width:80%;"><div style="background:rgba(255,255,255,0.1);padding:15px;border-radius:50%;width:60px;height:60px;display:flex;align-items:center;justify-content:center;">🎯</div><div style="background:rgba(255,255,255,0.1);padding:15px;border-radius:50%;width:60px;height:60px;display:flex;align-items:center;justify-content:center;">✍️</div><div style="background:rgba(255,255,255,0.1);padding:15px;border-radius:50%;width:60px;height:60px;display:flex;align-items:center;justify-content:center;">⚡</div></div><div style="font-size:12px;opacity:0.8;">5 AI Agents • 15 CCV Items • 773 Usage Sessions</div></div>'
+        };
+
+        // Document Templates
+        const documents = {
+            'toc': {
+                title: 'The Art of Calisthenics - Complete TOC',
+                content: `The Art of Calisthenics: A Revolutionary Approach to Human Movement
+
+INTRODUCTION
+- Preface
+- Disclaimer  
+- Introduction
+
+PART 1 - START HERE
+Chapter 1: What, How, Why & Who
+Chapter 2: Getting Started
+
+PART 2 - THE ART OF CALISTHENICS  
+Chapter 3: What is Calisthenics?
+Chapter 4: Calisthenics is for Everyone
+Chapter 5: What to Expect from Calisthenics?
+
+PART 3 - FOUNDATION
+Chapter 6: The Movement Ecosystem Universe
+Chapter 7: Building Your Foundation
+Chapter 8: The Planetary Progression System
+
+PART 4 - TECHNIQUE & SKILLS
+Chapters 9-15: Progressive Skill Development
+
+PART 5 - PROGRAMMING & PRACTICE
+Chapters 16-18: Systematic Training
+
+PART 6 - MASTERY & BEYOND  
+Chapters 19-20: Advanced Integration
+
+Target Length: 700+ pages
+Visual Elements: 200+ diagrams and illustrations`
+            },
+            'chapter1': {
+                title: 'Chapter 1: The Philosophy of Movement',
+                content: `Chapter 1: The Philosophy of Movement
+
+The Question That Changes Everything
+
+This is not a book about exercises. This is a book about the conversation between your body and your ambition. Before we learn to move, we must first ask: why do we seek to be stronger?
+
+Movement is the bridge between unconscious patterns and conscious choice. It transforms automatic reactions into intentional actions, revealing the profound connection between physical mastery and mental clarity.
+
+The Architect of the Self
+
+Every repetition is a choice. Every progression is a declaration. Every moment of practice is an opportunity to become the architect of your own transformation.
+
+Authority becomes stronger when it doesn't need to defend itself. Your body knows how to move. Your mind knows how to learn. Your spirit knows how to grow. The art is in the integration.
+
+The Blueprint for Transformation
+
+This book is built on three foundational pillars:
+
+1. The Alpha Intelligence Loop (The Why)
+A systematic approach to self-guided practice that teaches you to prepare, interpret feedback, track progress, and continuously adapt.
+
+2. The Movement Ecosystem Universe (The What)  
+A comprehensive framework that views movement not as isolated exercises, but as an interconnected system of physical, mental, and emotional development.
+
+3. The Planetary Progression System (The How)
+A structured approach to skill development that honors individual variation while maintaining clear progression principles.
+
+The Promise
+
+By the end of this journey, you will have more than strength. You will have developed the capacity to approach any challenge with systematic intelligence, authentic confidence, and the quiet authority that comes from earned capability.
+
+Movement becomes a practice of consciousness. Strength becomes a foundation for service. Training becomes a pathway to becoming who you were meant to be.`
+            },
+            'chapter2': {
+                title: 'Chapter 2: Foundation Building',
+                content: `Chapter 2: Foundation Building - The Technical Gateway
+
+Beyond the Aesthetic
+
+Most people approach calisthenics with Instagram-inspired goals. Foundation building is where Instagram inspiration meets biomechanical reality. It's where ambition learns patience.
+
+The Three-Pillar Foundation System
+
+Every sustainable movement practice rests on three interconnected pillars:
+
+Pillar 1: Structural Integrity
+Your body as architecture. Joint mobility, postural awareness, breathing patterns, and movement quality over quantity.
+
+Pillar 2: Progressive Overload Intelligence  
+The systematic application of challenge that respects current capacity while creating adaptive stimulus.
+
+Pillar 3: Movement Ecology
+Understanding that no exercise exists in isolation. Every movement affects every other movement.
+
+Assessment Before Progression
+
+You cannot manage what you do not measure. The Baseline Assessment Framework includes movement screen, strength assessment, skill assessment, and capacity assessment.
+
+The Alpha Intelligence Loop in Practice
+
+Phase 1: Preparation
+Phase 2: Execution with Awareness  
+Phase 3: Integration and Analysis
+Phase 4: Adaptive Planning
+
+Progressive Overload: Beyond Adding Weight
+
+In calisthenics, progression is an art form with multiple dimensions: leverage progression, range of motion progression, unilateral progression, temporal progression, and skill integration progression.
+
+Common Foundation Mistakes
+
+Skipping the basics, linear progression obsession, isolation thinking, and patience deficit.
+
+The foundation phase is not a delay before the "real" training begins. It is the real training. Everything else is simply an expression of what you build here.`
+            }
+        };
+
+        // Prompt Templates
+        const prompts = {
+            'confident-humility': `Apply the confident humility framework to this writing. Authority should come through expertise and clarity, not defensiveness or over-explanation. Lead with earned wisdom from experience, not theoretical knowledge. Make definitive statements about what you know while remaining open about what you're still learning. Focus on serving reader transformation rather than displaying your knowledge.
+
+KEY PRINCIPLES:
+- Authority becomes stronger when it doesn't need to defend itself
+- Expertise without ego creates trust
+- Clear statements over qualified maybes (when you know)
+- Service to reader over showcasing knowledge`,
+
+            'msopm': `MSOPM V2 - Enhanced Modular Framework
+
+MODULE 1 - ROLE & CONTEXT
+You are an expert prompt engineer specializing in advanced LLM instruction design. Your objective is to identify and resolve weaknesses in prompt structure, clarity, intent, and usability.
+
+MODULE 2 - TARGET INPUT
+Analyze the following prompt. If no target provided, recursively analyze this framework.
+[INSERT_PROMPT_TO_BE_CRITIQUED_HERE]
+
+MODULE 3 - ANALYSIS DIRECTIVES
+Comprehensive critique using these lenses:
+- Structure: Evaluate logical flow, modularity, component ordering
+- Clarity: Assess ambiguity, vague language, unnecessary jargon
+- Intent: Verify alignment with primary task goal and context framing
+- Usability: Review reusability, adaptability, and precision
+
+MODULE 4 - OUTPUT FORMAT
+- Flaw Summary: Bullet-point list by category
+- Suggested Fixes: Clear, actionable revisions
+- Improved Prompt: Rewritten with modular structure
+- Self-Evaluation: Critique of improved version
+
+VALUE PROPOSITION: Enhanced framework with recursive capability and production-ready format.`,
+
+            'ai-legion': `The AI Legion: 60-90 Minute Content Creation Pipeline
+
+PHASE 1: CAPTURE & SYNTHESIS (15-20 minutes)
+- Raw thought capture (voice notes, stream of consciousness)
+- Initial framework development
+- Core concept identification
+- Strategic angle determination
+
+PHASE 2: VISUAL TRANSLATION (20-30 minutes)  
+- Visual concept development
+- Design system creation
+- Graphic asset production
+- Brand consistency application
+
+PHASE 3: CONTENT MULTIPLICATION (25-40 minutes)
+- Platform-specific adaptation
+- Format optimization
+- Sequence development
+- Scheduling and deployment
+
+THREE-AGENT ARCHITECTURE:
+1. Framework Architect (philosophical synthesis)
+2. Visual Systems Designer (aesthetic translation)  
+3. Content Alchemist (multi-format deployment)
+
+Transforms scattered creative work into systematic content production with consistent brand voice and maximum reach.`,
+
+            'voice-style': `Channel the authentic Gabo Saturno voice with these characteristics:
+
+RHYTHM & FLOW:
+- Short, punchy sentences mixed with longer explorations
+- Strategic use of ellipses for contemplative pauses...
+- Parenthetical thoughts (because real thinking isn't linear)
+- Questions that challenge assumptions
+
+TONE ELEMENTS:
+- Philosophical depth without pretension
+- Technical precision with human warmth
+- Confident authority tempered by genuine humility
+- Passion for transformation, not performance
+
+SIGNATURE PATTERNS:
+- "Here's the thing..." (introduces core insights)
+- "Authority becomes stronger when..." (power dynamics)
+- "The bridge between X and Y..." (connection thinking)
+- "Not about perfection, about practice" (growth mindset)`
+        };
+
+        // Voice Recognition Setup
+        function initVoiceRecognition() {
+            if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+                const SpeechRecognition = window.webkitSpeechRecognition || window.SpeechRecognition;
+                recognition = new SpeechRecognition();
+                recognition.continuous = false;
+                recognition.interimResults = false;
+                recognition.lang = 'en-US';
+
+                recognition.onstart = () => {
+                    isListening = true;
+                    document.getElementById('voiceBtn').classList.add('listening');
+                    showVoiceStatus('Listening...');
+                };
+
+                recognition.onend = () => {
+                    isListening = false;
+                    document.getElementById('voiceBtn').classList.remove('listening');
+                    hideVoiceStatus();
+                };
+
+                recognition.onresult = (event) => {
+                    const transcript = event.results[0][0].transcript.trim().toLowerCase();
+                    processVoiceCommand(transcript);
+                };
+
+                recognition.onerror = (event) => {
+                    showNotification(`Voice error: ${event.error}`, 'error');
+                    isListening = false;
+                    document.getElementById('voiceBtn').classList.remove('listening');
+                };
+            } else {
+                showNotification('Voice recognition not supported', 'error');
+            }
+        }
+
+        // Voice Commands
+        function processVoiceCommand(command) {
+            console.log('Voice command:', command);
+            
+            if (command.includes('load chapter')) {
+                const chapter = command.includes('1') ? 'chapter1' : command.includes('2') ? 'chapter2' : 'toc';
+                loadDocument(chapter);
+                showNotification(`Loaded ${chapter}`, 'success');
+            } 
+            else if (command.includes('insert') && command.includes('confident')) {
+                insertPrompt('confident-humility');
+            }
+            else if (command.includes('insert') && command.includes('msopm')) {
+                insertPrompt('msopm');
+            }
+            else if (command.includes('insert') && command.includes('legion')) {
+                insertPrompt('ai-legion');
+            }
+            else if (command.includes('preview') && command.includes('movement')) {
+                loadAsset('movement-lab');
+                switchMode('preview');
+                showNotification('Previewing Movement Lab', 'success');
+            }
+            else if (command.includes('preview') && command.includes('ecosystem')) {
+                loadAsset('ecosystem-dashboard');
+                switchMode('preview');
+                showNotification('Previewing Ecosystem Dashboard', 'success');
+            }
+            else if (command.includes('deploy')) {
+                deployProject();
+            }
+            else if (command.includes('save')) {
+                saveWork();
+            }
+            else {
+                // Insert spoken text
+                const editor = document.getElementById('mainEditor');
+                const start = editor.selectionStart;
+                const end = editor.selectionEnd;
+                const before = editor.value.substring(0, start);
+                const after = editor.value.substring(end);
+                editor.value = before + command + after;
+                editor.focus();
+                updateStats();
+            }
+        }
+
+        function toggleVoice() {
+            if (!recognition) {
+                initVoiceRecognition();
+                return;
+            }
+
+            if (isListening) {
+                recognition.stop();
+            } else {
+                recognition.start();
+            }
+        }
+
+        function showVoiceStatus(message) {
+            const status = document.getElementById('voiceStatus');
+            status.textContent = message;
+            status.classList.add('active');
+        }
+
+        function hideVoiceStatus() {
+            document.getElementById('voiceStatus').classList.remove('active');
+        }
+
+        // Core Functions
+        function switchMode(mode) {
+            currentMode = mode;
+            
+            // Update tabs
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // Update content
+            document.querySelectorAll('.editor-mode, .preview-mode, .assets-mode').forEach(el => {
+                el.classList.remove('active');
+            });
+            
+            document.getElementById(mode + 'Mode').classList.add('active');
+            
+            if (mode === 'assets') {
+                populateAssetsGrid();
+            }
+        }
+
+        function loadAsset(assetKey) {
+            const url = assetUrls[assetKey];
+            if (url) {
+                document.getElementById('assetPreview').src = url;
+                showNotification(`Loaded ${assetKey}`, 'success');
+            }
+        }
+
+        function loadDocument(docKey) {
+            const doc = documents[docKey];
+            if (doc) {
+                document.getElementById('documentTitle').value = doc.title;
+                document.getElementById('mainEditor').value = doc.content;
+                updateStats();
+                showNotification(`Loaded ${doc.title}`, 'success');
+            }
+        }
+
+        function insertPrompt(promptKey) {
+            const prompt = prompts[promptKey];
+            if (prompt) {
+                const editor = document.getElementById('mainEditor');
+                const start = editor.selectionStart;
+                const before = editor.value.substring(0, start);
+                const after = editor.value.substring(start);
+                const insertText = `\n\n${prompt}\n\n`;
+                
+                editor.value = before + insertText + after;
+                editor.focus();
+                editor.setSelectionRange(start + insertText.length, start + insertText.length);
+                updateStats();
+                showNotification(`Inserted ${promptKey} prompt`, 'success');
+            }
+        }
+
+        function populateAssetsGrid() {
+            const grid = document.getElementById('assetsGrid');
+            grid.innerHTML = '';
+            
+            const assets = [
+                { key: 'saturno-os', title: 'Saturno OS Hub', desc: 'Dark writing interface' },
+                { key: 'movement-lab', title: 'Movement Lab', desc: 'Practice workstation' },
+                { key: 'ecosystem-dashboard', title: 'Ecosystem Dashboard', desc: 'Command center' }
+            ];
+            
+            assets.forEach(asset => {
+                const card = document.createElement('div');
+                card.className = 'asset-card';
+                card.innerHTML = `
+                    <div class="asset-preview">
+                        <iframe src="${assetUrls[asset.key]}" loading="lazy"></iframe>
+                    </div>
+                    <div class="asset-card-content">
+                        <div class="asset-card-title">${asset.title}</div>
+                        <div class="asset-card-desc">${asset.desc}</div>
+                        <div class="asset-actions">
+                            <button class="asset-btn" onclick="loadAsset('${asset.key}')">👁️ Preview</button>
+                            <button class="asset-btn" onclick="embedAsset('${asset.key}')">📎 Embed</button>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function embedAsset(assetKey) {
+            const editor = document.getElementById('mainEditor');
+            const embedCode = `[EMBEDDED: ${assetKey.toUpperCase()}]\n${assetUrls[assetKey]}\n\n`;
+            
+            const start = editor.selectionStart;
+            const before = editor.value.substring(0, start);
+            const after = editor.value.substring(start);
+            
+            editor.value = before + embedCode + after;
+            editor.focus();
+            updateStats();
+            showNotification(`Embedded ${assetKey}`, 'success');
+        }
+
+        function updateStats() {
+            const text = document.getElementById('mainEditor').value;
+            wordCount = text.trim() ? text.trim().split(/\s+/).length : 0;
+            charCount = text.length;
+            
+            document.getElementById('statsBar').textContent = 
+                `Words: ${wordCount} | Characters: ${charCount}`;
+        }
+
+        function showNotification(message, type = 'info') {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.className = `notification ${type} show`;
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        function saveWork() {
+            const data = {
+                title: document.getElementById('documentTitle').value,
+                content: document.getElementById('mainEditor').value,
+                timestamp: new Date().toISOString()
+            };
+            
+            localStorage.setItem('saturno-empire-hub', JSON.stringify(data));
+            showNotification('Work saved locally', 'success');
+        }
+
+        function deployProject() {
+            showNotification('Run: npx vercel --prod in project directory', 'success');
+        }
+
+        function exportAll() {
+            showNotification('Export feature coming soon', 'info');
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🪐 Saturno Empire Hub initializing...');
+            
+            initVoiceRecognition();
+            
+            document.getElementById('voiceBtn').addEventListener('click', toggleVoice);
+            document.getElementById('mainEditor').addEventListener('input', updateStats);
+            
+            // Load saved work
+            const saved = localStorage.getItem('saturno-empire-hub');
+            if (saved) {
+                const data = JSON.parse(saved);
+                document.getElementById('documentTitle').value = data.title || '';
+                document.getElementById('mainEditor').value = data.content || '';
+                updateStats();
+            }
+            
+            showNotification('Empire Hub ready! Voice commands active.', 'success');
+            console.log('✅ Hub initialized');
+        });
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey || e.metaKey) {
+                switch(e.key) {
+                    case 's':
+                        e.preventDefault();
+                        saveWork();
+                        break;
+                    case 'k':
+                        e.preventDefault();
+                        toggleVoice();
+                        break;
+                }
+            }
+        });
+    </script>
+</body>
+</html>

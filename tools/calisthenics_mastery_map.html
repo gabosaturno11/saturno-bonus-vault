@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Art of Calisthenics - Mastery Journey Map</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            font-family: 'Inter', sans-serif;
+            color: #1e293b;
+            overflow-x: auto;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            position: relative;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .main-title {
+            font-size: 3rem;
+            font-weight: 700;
+            color: transparent;
+            background: linear-gradient(135deg, #1e40af, #3b82f6, #60a5fa);
+            background-clip: text;
+            -webkit-background-clip: text;
+            margin-bottom: 15px;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: #64748b;
+            font-weight: 400;
+        }
+
+        .journey-map {
+            width: 100%;
+            height: 2000px;
+            position: relative;
+            background: linear-gradient(180deg, rgba(59, 130, 246, 0.02) 0%, rgba(96, 165, 250, 0.02) 100%);
+            border-radius: 20px;
+            padding: 40px;
+        }
+
+        /* Main Flow Path */
+        .main-flow {
+            position: absolute;
+            left: 50%;
+            top: 0;
+            transform: translateX(-50%);
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(180deg, #3b82f6, #60a5fa, #93c5fd, #dbeafe);
+            border-radius: 2px;
+            opacity: 0.6;
+        }
+
+        /* Part Nodes */
+        .part-node {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 180px;
+            height: 180px;
+            background: white;
+            border: 3px solid transparent;
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.15);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .part-node::before {
+            content: '';
+            position: absolute;
+            top: -3px;
+            left: -3px;
+            right: -3px;
+            bottom: -3px;
+            background: linear-gradient(135deg, #3b82f6, #60a5fa, #93c5fd);
+            border-radius: 50%;
+            z-index: -1;
+        }
+
+        .part-node:hover {
+            transform: translateX(-50%) scale(1.05);
+            box-shadow: 0 15px 40px rgba(59, 130, 246, 0.25);
+        }
+
+        .part-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #3b82f6;
+            margin-bottom: 8px;
+        }
+
+        .part-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #1e293b;
+            line-height: 1.2;
+        }
+
+        /* Positioning for each part */
+        .part-1 { top: 50px; }
+        .part-2 { top: 280px; }
+        .part-3 { top: 510px; }
+        .part-4 { top: 740px; }
+        .part-5 { top: 1380px; }
+        .part-6 { top: 1610px; }
+        .part-7 { top: 1840px; }
+
+        /* Specialization Branches */
+        .specialization-container {
+            position: absolute;
+            top: 740px;
+            left: 0;
+            right: 0;
+            height: 640px;
+        }
+
+        .spec-branch {
+            position: absolute;
+            width: 140px;
+            height: 140px;
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .spec-branch:hover {
+            transform: translateY(-5px);
+            border-color: #3b82f6;
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.15);
+        }
+
+        .spec-icon {
+            font-size: 2rem;
+            margin-bottom: 8px;
+        }
+
+        .spec-title {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #1e293b;
+            line-height: 1.2;
+        }
+
+        /* Positioning specializations in a radial pattern */
+        .bodybuilding { top: 50px; left: 10%; }
+        .power-free { top: 50px; right: 10%; }
+        .freestyle { top: 200px; left: 5%; }
+        .street-lifting { top: 200px; right: 5%; }
+        .handbalancing { top: 350px; left: 15%; }
+        .mobility { top: 350px; right: 15%; }
+        .hybrid { top: 500px; left: 50%; transform: translateX(-50%); }
+
+        /* Connection Lines */
+        .connection-line {
+            position: absolute;
+            background: linear-gradient(90deg, #93c5fd, #60a5fa);
+            height: 2px;
+            border-radius: 1px;
+            opacity: 0.4;
+        }
+
+        /* Connecting lines from Part 4 to specializations */
+        .line-1 { top: 820px; left: 45%; width: 25%; transform: rotate(-15deg); }
+        .line-2 { top: 820px; right: 45%; width: 25%; transform: rotate(15deg); }
+        .line-3 { top: 920px; left: 42%; width: 30%; transform: rotate(-25deg); }
+        .line-4 { top: 920px; right: 42%; width: 30%; transform: rotate(25deg); }
+        .line-5 { top: 1020px; left: 40%; width: 20%; transform: rotate(-10deg); }
+        .line-6 { top: 1020px; right: 40%; width: 20%; transform: rotate(10deg); }
+        .line-7 { top: 1120px; left: 47%; width: 6%; }
+
+        /* Convergence lines back to main flow */
+        .convergence-line {
+            position: absolute;
+            background: linear-gradient(45deg, #60a5fa, #3b82f6);
+            height: 2px;
+            border-radius: 1px;
+            opacity: 0.3;
+        }
+
+        .conv-1 { top: 1340px; left: 20%; width: 30%; transform: rotate(10deg); }
+        .conv-2 { top: 1340px; right: 20%; width: 30%; transform: rotate(-10deg); }
+        .conv-3 { top: 1320px; left: 35%; width: 15%; transform: rotate(5deg); }
+        .conv-4 { top: 1320px; right: 35%; width: 15%; transform: rotate(-5deg); }
+
+        /* Feedback Loops */
+        .feedback-loop {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            border: 2px solid #93c5fd;
+            border-radius: 50%;
+            border-style: dashed;
+            opacity: 0.6;
+        }
+
+        .loop-1 { top: 1750px; left: 30%; }
+        .loop-2 { top: 1750px; right: 30%; }
+
+        /* Arrows */
+        .arrow {
+            position: absolute;
+            width: 0;
+            height: 0;
+            border-left: 8px solid transparent;
+            border-right: 8px solid transparent;
+            border-top: 12px solid #60a5fa;
+            opacity: 0.7;
+        }
+
+        .arrow-down { top: 1950px; left: 50%; transform: translateX(-50%); }
+
+        /* Side Labels */
+        .side-label {
+            position: absolute;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #64748b;
+            transform: rotate(-90deg);
+            transform-origin: center;
+        }
+
+        .foundation-label { top: 200px; left: -80px; }
+        .development-label { top: 600px; left: -80px; }
+        .specialization-label { top: 1000px; left: -80px; }
+        .integration-label { top: 1500px; left: -80px; }
+        .mastery-label { top: 1750px; left: -80px; }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px 10px;
+            }
+            
+            .main-title {
+                font-size: 2rem;
+            }
+            
+            .journey-map {
+                padding: 20px;
+                height: 1600px;
+            }
+            
+            .part-node {
+                width: 120px;
+                height: 120px;
+            }
+            
+            .part-number {
+                font-size: 1.5rem;
+            }
+            
+            .part-title {
+                font-size: 0.8rem;
+            }
+            
+            .spec-branch {
+                width: 100px;
+                height: 100px;
+            }
+            
+            .spec-title {
+                font-size: 0.7rem;
+            }
+            
+            .specialization-container {
+                height: 500px;
+            }
+            
+            /* Adjust positioning for mobile */
+            .part-1 { top: 40px; }
+            .part-2 { top: 200px; }
+            .part-3 { top: 360px; }
+            .part-4 { top: 520px; }
+            .part-5 { top: 1020px; }
+            .part-6 { top: 1180px; }
+            .part-7 { top: 1340px; }
+            
+            .specialization-container {
+                top: 520px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 class="main-title">THE ART OF CALISTHENICS</h1>
+            <p class="subtitle">Mastery Journey Map</p>
+        </div>
+
+        <div class="journey-map">
+            <!-- Main Flow Line -->
+            <div class="main-flow"></div>
+
+            <!-- Side Labels -->
+            <div class="side-label foundation-label">FOUNDATION</div>
+            <div class="side-label development-label">DEVELOPMENT</div>
+            <div class="side-label specialization-label">SPECIALIZATION</div>
+            <div class="side-label integration-label">INTEGRATION</div>
+            <div class="side-label mastery-label">MASTERY</div>
+
+            <!-- Part Nodes -->
+            <div class="part-node part-1">
+                <div class="part-number">1</div>
+                <div class="part-title">START HERE</div>
+            </div>
+
+            <div class="part-node part-2">
+                <div class="part-number">2</div>
+                <div class="part-title">THE ART OF<br>CALISTHENICS</div>
+            </div>
+
+            <div class="part-node part-3">
+                <div class="part-number">3</div>
+                <div class="part-title">MASTERING<br>CALISTHENICS</div>
+            </div>
+
+            <div class="part-node part-4">
+                <div class="part-number">4</div>
+                <div class="part-title">ROAD TO<br>MASTERY</div>
+            </div>
+
+            <div class="part-node part-5">
+                <div class="part-number">5</div>
+                <div class="part-title">BUILDING YOUR<br>PROGRAM</div>
+            </div>
+
+            <div class="part-node part-6">
+                <div class="part-number">6</div>
+                <div class="part-title">THE ENDLESS<br>JOURNEY</div>
+            </div>
+
+            <div class="part-node part-7">
+                <div class="part-number">7</div>
+                <div class="part-title">YOU ARE NOW<br>A MASTER</div>
+            </div>
+
+            <!-- Specialization Container -->
+            <div class="specialization-container">
+                <div class="spec-branch bodybuilding">
+                    <div class="spec-icon">💪</div>
+                    <div class="spec-title">BODYBUILDING</div>
+                </div>
+
+                <div class="spec-branch power-free">
+                    <div class="spec-icon">⚡</div>
+                    <div class="spec-title">POWER FREE</div>
+                </div>
+
+                <div class="spec-branch freestyle">
+                    <div class="spec-icon">🎯</div>
+                    <div class="spec-title">FREESTYLE</div>
+                </div>
+
+                <div class="spec-branch street-lifting">
+                    <div class="spec-icon">🏋️</div>
+                    <div class="spec-title">STREET LIFTING</div>
+                </div>
+
+                <div class="spec-branch handbalancing">
+                    <div class="spec-icon">🤸</div>
+                    <div class="spec-title">HAND-BALANCING</div>
+                </div>
+
+                <div class="spec-branch mobility">
+                    <div class="spec-icon">🧘</div>
+                    <div class="spec-title">MOBILITY SKILLS</div>
+                </div>
+
+                <div class="spec-branch hybrid">
+                    <div class="spec-icon">🌟</div>
+                    <div class="spec-title">HYBRID PATHS</div>
+                </div>
+            </div>
+
+            <!-- Connection Lines -->
+            <div class="connection-line line-1"></div>
+            <div class="connection-line line-2"></div>
+            <div class="connection-line line-3"></div>
+            <div class="connection-line line-4"></div>
+            <div class="connection-line line-5"></div>
+            <div class="connection-line line-6"></div>
+            <div class="connection-line line-7"></div>
+
+            <!-- Convergence Lines -->
+            <div class="convergence-line conv-1"></div>
+            <div class="convergence-line conv-2"></div>
+            <div class="convergence-line conv-3"></div>
+            <div class="convergence-line conv-4"></div>
+
+            <!-- Feedback Loops -->
+            <div class="feedback-loop loop-1"></div>
+            <div class="feedback-loop loop-2"></div>
+
+            <!-- Arrow -->
+            <div class="arrow arrow-down"></div>
+        </div>
+    </div>
+
+    <script>
+        // Add interactive hover effects
+        document.querySelectorAll('.part-node, .spec-branch').forEach(node => {
+            node.addEventListener('mouseenter', function() {
+                // Highlight connected elements
+                this.style.transform = this.classList.contains('part-node') 
+                    ? 'translateX(-50%) scale(1.05)' 
+                    : 'translateY(-5px) scale(1.05)';
+            });
+            
+            node.addEventListener('mouseleave', function() {
+                this.style.transform = this.classList.contains('part-node') 
+                    ? 'translateX(-50%) scale(1)' 
+                    : 'translateY(0) scale(1)';
+            });
+        });
+
+        // Add animation on scroll
+        window.addEventListener('scroll', function() {
+            const elements = document.querySelectorAll('.part-node, .spec-branch');
+            const windowHeight = window.innerHeight;
+            
+            elements.forEach(element => {
+                const elementTop = element.getBoundingClientRect().top;
+                const elementVisible = 150;
+                
+                if (elementTop < windowHeight - elementVisible) {
+                    element.style.opacity = '1';
+                    element.style.transform += ' translateY(0)';
+                }
+            });
+        });
+    </script>
+</body>
+</html>

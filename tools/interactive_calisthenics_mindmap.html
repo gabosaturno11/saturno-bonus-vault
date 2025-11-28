@@ -1,0 +1,1063 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Art of Calisthenics - Interactive Mind Map</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0f4c75 0%, #3282b8 25%, #0f4c75 50%, #3282b8 75%, #0f4c75 100%);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+            font-family: 'Inter', sans-serif;
+            color: #ffffff;
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .toolbar {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+            display: flex;
+            gap: 10px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .toolbar button {
+            padding: 10px 15px;
+            background: linear-gradient(135deg, #3282b8, #0f4c75);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            box-shadow: 0 4px 15px rgba(50, 130, 184, 0.3);
+        }
+
+        .toolbar button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(50, 130, 184, 0.4);
+            background: linear-gradient(135deg, #0f4c75, #3282b8);
+        }
+
+        .toolbar button.active {
+            background: linear-gradient(135deg, #1e3a8a, #1e40af);
+            transform: translateY(-1px);
+        }
+
+        .info-panel {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            max-width: 300px;
+            font-size: 14px;
+            line-height: 1.5;
+            color: white;
+        }
+
+        .canvas {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+            overflow: hidden;
+            cursor: grab;
+        }
+
+        .canvas.dragging {
+            cursor: grabbing;
+        }
+
+        .canvas.adding-node {
+            cursor: crosshair;
+        }
+
+        .canvas.connecting {
+            cursor: cell;
+        }
+
+        .viewport {
+            position: absolute;
+            top: 0;
+            left: 0;
+            transform-origin: 0 0;
+            transition: transform 0.3s ease;
+        }
+
+        .node {
+            position: absolute;
+            min-width: 180px;
+            min-height: 80px;
+            background: rgba(255, 255, 255, 0.95);
+            border: 3px solid transparent;
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            padding: 20px;
+            user-select: none;
+            backdrop-filter: blur(10px);
+        }
+
+        .node::before {
+            content: '';
+            position: absolute;
+            top: -3px;
+            left: -3px;
+            right: -3px;
+            bottom: -3px;
+            background: linear-gradient(135deg, #3282b8, #0f4c75, #3282b8);
+            border-radius: 20px;
+            z-index: -1;
+            opacity: 0.8;
+        }
+
+        .node:hover {
+            transform: scale(1.05);
+            box-shadow: 0 15px 40px rgba(50, 130, 184, 0.5);
+        }
+
+        .node.selected {
+            transform: scale(1.1);
+            box-shadow: 0 20px 50px rgba(50, 130, 184, 0.6);
+        }
+
+        .node.selected::before {
+            background: linear-gradient(135deg, #1e40af, #3b82f6, #60a5fa);
+            opacity: 1;
+        }
+
+        .node.root {
+            min-width: 300px;
+            min-height: 120px;
+            background: linear-gradient(135deg, #1e40af, #3b82f6);
+            color: white;
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .node.root::before {
+            background: linear-gradient(135deg, #1e3a8a, #1e40af);
+        }
+
+        .node.part {
+            min-width: 220px;
+            min-height: 100px;
+            background: linear-gradient(135deg, rgba(50, 130, 184, 0.9), rgba(15, 76, 117, 0.9));
+            color: white;
+            font-weight: 600;
+        }
+
+        .node.part::before {
+            background: linear-gradient(135deg, #3282b8, #0f4c75);
+        }
+
+        .node.specialization {
+            min-width: 160px;
+            min-height: 70px;
+            background: rgba(255, 255, 255, 0.9);
+            color: #1e293b;
+        }
+
+        .node-title {
+            font-weight: 600;
+            font-size: 16px;
+            margin-bottom: 8px;
+            word-break: break-word;
+            max-width: 250px;
+            color: #1e293b;
+        }
+
+        .node.root .node-title {
+            font-size: 20px;
+            color: white;
+        }
+
+        .node.part .node-title {
+            font-size: 18px;
+            color: white;
+        }
+
+        .node-subtitle {
+            font-size: 12px;
+            color: #64748b;
+            font-style: italic;
+            word-break: break-word;
+            max-width: 250px;
+        }
+
+        .node.root .node-subtitle {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 14px;
+        }
+
+        .node.part .node-subtitle {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 13px;
+        }
+
+        .connection {
+            position: absolute;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .connection-line {
+            stroke: #60a5fa;
+            stroke-width: 3;
+            fill: none;
+            opacity: 0.7;
+            filter: drop-shadow(0 2px 8px rgba(96, 165, 250, 0.3));
+        }
+
+        .connection-line.highlighted {
+            stroke: #3b82f6;
+            stroke-width: 4;
+            opacity: 1;
+        }
+
+        .edit-modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            z-index: 2000;
+            min-width: 300px;
+            display: none;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+            z-index: 1999;
+            display: none;
+        }
+
+        .edit-modal h3 {
+            margin-bottom: 20px;
+            color: #1e293b;
+            font-size: 18px;
+        }
+
+        .edit-modal input, .edit-modal textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-family: inherit;
+            font-size: 14px;
+            resize: vertical;
+            transition: border-color 0.3s ease;
+        }
+
+        .edit-modal input:focus, .edit-modal textarea:focus {
+            outline: none;
+            border-color: #3b82f6;
+        }
+
+        .edit-modal .buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
+        .edit-modal button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .edit-modal .save-btn {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .edit-modal .cancel-btn {
+            background: #e2e8f0;
+            color: #64748b;
+        }
+
+        .edit-modal .delete-btn {
+            background: #ef4444;
+            color: white;
+        }
+
+        .edit-modal button:hover {
+            transform: translateY(-1px);
+        }
+
+        .zoom-controls {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .zoom-controls button {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        .zoom-controls button:hover {
+            background: rgba(50, 130, 184, 0.3);
+            transform: scale(1.1);
+        }
+
+        .connecting-line {
+            position: absolute;
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        .temp-line {
+            stroke: #60a5fa;
+            stroke-width: 3;
+            stroke-dasharray: 5,5;
+            fill: none;
+            opacity: 0.8;
+            filter: drop-shadow(0 2px 8px rgba(96, 165, 250, 0.4));
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .toolbar {
+                flex-direction: column;
+                top: 10px;
+                left: 10px;
+                right: 10px;
+                max-width: none;
+            }
+
+            .info-panel {
+                display: none;
+            }
+
+            .node {
+                min-width: 120px;
+                min-height: 60px;
+                padding: 15px;
+            }
+
+            .node-title {
+                font-size: 14px;
+                max-width: 150px;
+            }
+
+            .node-subtitle {
+                font-size: 11px;
+                max-width: 150px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="toolbar">
+        <button id="addNodeBtn" title="Add Node">➕ Add Node</button>
+        <button id="connectBtn" title="Connect Nodes">🔗 Connect</button>
+        <button id="panBtn" class="active" title="Pan/Move">✋ Pan</button>
+        <button id="exportBtn" title="Export Data">💾 Export</button>
+        <button id="resetBtn" title="Reset View">🎯 Reset View</button>
+    </div>
+
+    <div class="info-panel">
+        <strong>How to use:</strong><br>
+        • <strong>Pan Mode:</strong> Click and drag to move around<br>
+        • <strong>Add Node:</strong> Click anywhere to add a new node<br>
+        • <strong>Connect:</strong> Click two nodes to connect them<br>
+        • <strong>Edit:</strong> Double-click any node to edit<br>
+        • <strong>Delete:</strong> Select a node and press Delete<br>
+        • Use mouse wheel to zoom in/out
+    </div>
+
+    <div class="zoom-controls">
+        <button id="zoomInBtn">+</button>
+        <button id="zoomOutBtn">-</button>
+    </div>
+
+    <div class="canvas" id="canvas">
+        <div class="viewport" id="viewport">
+            <svg class="connections" id="connections" width="8000" height="6000" style="position: absolute; top: 0; left: 0; pointer-events: none;">
+            </svg>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modalOverlay"></div>
+    <div class="edit-modal" id="editModal">
+        <h3>Edit Node</h3>
+        <input type="text" id="nodeTitleInput" placeholder="Node title">
+        <textarea id="nodeSubtitleInput" placeholder="Subtitle or description" rows="3"></textarea>
+        <div class="buttons">
+            <button class="delete-btn" id="deleteNodeBtn">Delete</button>
+            <button class="cancel-btn" id="cancelEditBtn">Cancel</button>
+            <button class="save-btn" id="saveNodeBtn">Save</button>
+        </div>
+    </div>
+
+    <svg class="connecting-line" id="connectingLine" width="100%" height="100%" style="position: fixed; top: 0; left: 0; pointer-events: none; display: none;">
+        <line class="temp-line" id="tempLine" x1="0" y1="0" x2="0" y2="0"/>
+    </svg>
+
+    <script>
+        function safeGetElement(id) {
+            try {
+                return document.getElementById(id);
+            } catch (error) {
+                console.warn(`Element with id '${id}' not found:`, error);
+                return null;
+            }
+        }
+
+        function safeAddEventListener(element, event, handler) {
+            try {
+                if (element && typeof element.addEventListener === 'function') {
+                    element.addEventListener(event, handler);
+                    return true;
+                }
+                return false;
+            } catch (error) {
+                console.warn('Error adding event listener:', error);
+                return false;
+            }
+        }
+
+        class MindMap {
+            constructor() {
+                this.nodes = new Map();
+                this.connections = new Set();
+                this.mode = 'pan';
+                this.selectedNode = null;
+                this.connectingFrom = null;
+                this.scale = 1;
+                this.translateX = 0;
+                this.translateY = 0;
+                this.isDragging = false;
+                this.dragStart = { x: 0, y: 0 };
+                this.nodeCounter = 0;
+
+                this.initializeElements();
+                this.initializeEvents();
+                this.createInitialNodes();
+            }
+
+            initializeElements() {
+                try {
+                    this.canvas = safeGetElement('canvas');
+                    this.viewport = safeGetElement('viewport');
+                    this.connectionsContainer = safeGetElement('connections');
+                    this.editModal = safeGetElement('editModal');
+                    this.modalOverlay = safeGetElement('modalOverlay');
+                    this.connectingLine = safeGetElement('connectingLine');
+                    this.tempLine = safeGetElement('tempLine');
+                    
+                    if (!this.canvas || !this.viewport || !this.connectionsContainer) {
+                        console.error('Critical elements missing');
+                        return false;
+                    }
+                    return true;
+                } catch (error) {
+                    console.error('Error initializing elements:', error);
+                    return false;
+                }
+            }
+
+            initializeEvents() {
+                try {
+                    // Toolbar buttons
+                    safeAddEventListener(safeGetElement('addNodeBtn'), 'click', () => this.setMode('add'));
+                    safeAddEventListener(safeGetElement('connectBtn'), 'click', () => this.setMode('connect'));
+                    safeAddEventListener(safeGetElement('panBtn'), 'click', () => this.setMode('pan'));
+                    safeAddEventListener(safeGetElement('exportBtn'), 'click', () => this.exportData());
+                    safeAddEventListener(safeGetElement('resetBtn'), 'click', () => this.resetView());
+
+                    // Zoom controls
+                    safeAddEventListener(safeGetElement('zoomInBtn'), 'click', () => this.zoom(1.2));
+                    safeAddEventListener(safeGetElement('zoomOutBtn'), 'click', () => this.zoom(0.8));
+
+                    // Canvas events
+                    if (this.canvas) {
+                        safeAddEventListener(this.canvas, 'mousedown', (e) => this.handleMouseDown(e));
+                        safeAddEventListener(this.canvas, 'mousemove', (e) => this.handleMouseMove(e));
+                        safeAddEventListener(this.canvas, 'mouseup', (e) => this.handleMouseUp(e));
+                        safeAddEventListener(this.canvas, 'wheel', (e) => this.handleWheel(e));
+                        safeAddEventListener(this.canvas, 'click', (e) => this.handleCanvasClick(e));
+                    }
+
+                    // Modal events
+                    safeAddEventListener(safeGetElement('saveNodeBtn'), 'click', () => this.saveNodeEdit());
+                    safeAddEventListener(safeGetElement('cancelEditBtn'), 'click', () => this.closeModal());
+                    safeAddEventListener(safeGetElement('deleteNodeBtn'), 'click', () => this.deleteSelectedNode());
+                    safeAddEventListener(this.modalOverlay, 'click', () => this.closeModal());
+
+                    // Keyboard events
+                    safeAddEventListener(document, 'keydown', (e) => this.handleKeyDown(e));
+                } catch (error) {
+                    console.error('Error initializing events:', error);
+                }
+            }
+
+            createInitialNodes() {
+                try {
+                    if (!this.viewport) {
+                        console.error('Viewport not available');
+                        return;
+                    }
+
+                    // Create the root node - centered at top
+                    const rootNode = this.createNode(600, 100, 'THE ART OF CALISTHENICS', 'Mastery Journey Map', 'root');
+
+                    // Create main parts in vertical flow
+                    const parts = [
+                        { title: 'PART 1', subtitle: 'START HERE', x: 600, y: 300, type: 'part' },
+                        { title: 'PART 2', subtitle: 'THE ART OF CALISTHENICS', x: 400, y: 450, type: 'part' },
+                        { title: 'PART 3', subtitle: 'MASTERING CALISTHENICS', x: 800, y: 450, type: 'part' },
+                        { title: 'PART 4', subtitle: 'ROAD TO MASTERY', x: 600, y: 600, type: 'part' },
+                        { title: 'PART 5', subtitle: 'BUILDING YOUR PROGRAM', x: 600, y: 900, type: 'part' },
+                        { title: 'PART 6', subtitle: 'THE ENDLESS JOURNEY', x: 400, y: 1050, type: 'part' },
+                        { title: 'PART 7', subtitle: 'YOU ARE NOW A MASTER', x: 800, y: 1050, type: 'part' }
+                    ];
+
+                    const partNodes = [];
+                    parts.forEach(part => {
+                        const node = this.createNode(part.x, part.y, part.title, part.subtitle, part.type);
+                        if (node) partNodes.push(node);
+                    });
+
+                    // Connect main parts to root and each other in sequence
+                    if (rootNode && partNodes.length > 0) {
+                        this.addConnection(rootNode.id, partNodes[0].id); // Root to Part 1
+                        
+                        // Connect parts sequentially
+                        for (let i = 0; i < partNodes.length - 1; i++) {
+                            if (partNodes[i] && partNodes[i + 1]) {
+                                this.addConnection(partNodes[i].id, partNodes[i + 1].id);
+                            }
+                        }
+                    }
+
+                    // Add specializations branching horizontally from Part 4
+                    const part4Node = partNodes[3]; // PART 4 (index 3)
+                    if (part4Node) {
+                        const specializations = [
+                            { title: 'BODYBUILDING', subtitle: 'Aesthetics & Volume', x: 200, y: 550 },
+                            { title: 'POWER FREE', subtitle: 'Advanced Skills', x: 200, y: 650 },
+                            { title: 'FREESTYLE', subtitle: 'Creative Flow', x: 1000, y: 550 },
+                            { title: 'STREET LIFTING', subtitle: 'Weighted Movements', x: 1000, y: 650 },
+                            { title: 'HAND-BALANCING', subtitle: 'Balance & Control', x: 200, y: 750 },
+                            { title: 'MOBILITY SKILLS', subtitle: 'Flexibility & Range', x: 1000, y: 750 },
+                            { title: 'HYBRID PATHS', subtitle: 'Combined Approaches', x: 600, y: 800 }
+                        ];
+
+                        specializations.forEach(spec => {
+                            const specNode = this.createNode(spec.x, spec.y, spec.title, spec.subtitle, 'specialization');
+                            if (specNode) {
+                                this.addConnection(part4Node.id, specNode.id);
+                            }
+                        });
+                    }
+
+                    this.updateConnections();
+                } catch (error) {
+                    console.error('Error creating initial nodes:', error);
+                }
+            }
+
+            createNode(x, y, title = 'New Node', subtitle = '', type = 'default') {
+                try {
+                    if (!this.viewport) {
+                        console.error('Viewport not available for node creation');
+                        return null;
+                    }
+
+                    const nodeId = `node_${this.nodeCounter++}`;
+                    const nodeElement = document.createElement('div');
+                    nodeElement.className = `node ${type}`;
+                    nodeElement.id = nodeId;
+                    nodeElement.style.left = `${x}px`;
+                    nodeElement.style.top = `${y}px`;
+
+                    const titleElement = document.createElement('div');
+                    titleElement.className = 'node-title';
+                    titleElement.textContent = title;
+
+                    const subtitleElement = document.createElement('div');
+                    subtitleElement.className = 'node-subtitle';
+                    subtitleElement.textContent = subtitle;
+
+                    nodeElement.appendChild(titleElement);
+                    nodeElement.appendChild(subtitleElement);
+
+                    safeAddEventListener(nodeElement, 'click', (e) => this.handleNodeClick(e, nodeId));
+                    safeAddEventListener(nodeElement, 'dblclick', (e) => {
+                        e.preventDefault();
+                        this.editNode(nodeId);
+                    });
+
+                    this.viewport.appendChild(nodeElement);
+
+                    const nodeData = {
+                        id: nodeId,
+                        element: nodeElement,
+                        x: x,
+                        y: y,
+                        title: title,
+                        subtitle: subtitle,
+                        type: type
+                    };
+
+                    this.nodes.set(nodeId, nodeData);
+                    return nodeData;
+                } catch (error) {
+                    console.error('Error creating node:', error);
+                    return null;
+                }
+            }
+
+            setMode(mode) {
+                try {
+                    this.mode = mode;
+                    if (this.canvas) {
+                        this.canvas.className = `canvas ${mode === 'add' ? 'adding-node' : mode === 'connect' ? 'connecting' : ''}`;
+                    }
+                    
+                    // Update toolbar buttons
+                    document.querySelectorAll('.toolbar button').forEach(btn => {
+                        if (btn) btn.classList.remove('active');
+                    });
+                    
+                    const activeBtn = safeGetElement(`${mode}Btn`) || (mode === 'pan' ? safeGetElement('panBtn') : null);
+                    if (activeBtn) activeBtn.classList.add('active');
+
+                    if (mode !== 'connect') {
+                        this.connectingFrom = null;
+                        if (this.connectingLine) this.connectingLine.style.display = 'none';
+                    }
+                } catch (error) {
+                    console.error('Error setting mode:', error);
+                }
+            }
+
+            handleCanvasClick(e) {
+                try {
+                    if (e.target !== this.canvas) return;
+
+                    if (this.mode === 'add' && this.canvas) {
+                        const rect = this.canvas.getBoundingClientRect();
+                        const x = (e.clientX - rect.left - this.translateX) / this.scale;
+                        const y = (e.clientY - rect.top - this.translateY) / this.scale;
+                        this.createNode(x, y);
+                    }
+                } catch (error) {
+                    console.error('Error handling canvas click:', error);
+                }
+            }
+
+            handleNodeClick(e, nodeId) {
+                try {
+                    e.stopPropagation();
+
+                    if (this.mode === 'connect') {
+                        if (!this.connectingFrom) {
+                            this.connectingFrom = nodeId;
+                            const node = this.nodes.get(nodeId);
+                            if (node && node.element) {
+                                node.element.classList.add('selected');
+                            }
+                        } else if (this.connectingFrom !== nodeId) {
+                            this.addConnection(this.connectingFrom, nodeId);
+                            const fromNode = this.nodes.get(this.connectingFrom);
+                            if (fromNode && fromNode.element) {
+                                fromNode.element.classList.remove('selected');
+                            }
+                            this.connectingFrom = null;
+                            if (this.connectingLine) this.connectingLine.style.display = 'none';
+                            this.updateConnections();
+                        }
+                    } else {
+                        this.selectNode(nodeId);
+                    }
+                } catch (error) {
+                    console.error('Error handling node click:', error);
+                }
+            }
+
+            selectNode(nodeId) {
+                try {
+                    // Clear previous selection
+                    this.nodes.forEach(node => {
+                        if (node.element) node.element.classList.remove('selected');
+                    });
+                    
+                    if (nodeId) {
+                        this.selectedNode = nodeId;
+                        const node = this.nodes.get(nodeId);
+                        if (node && node.element) {
+                            node.element.classList.add('selected');
+                        }
+                    } else {
+                        this.selectedNode = null;
+                    }
+                } catch (error) {
+                    console.error('Error selecting node:', error);
+                }
+            }
+
+            editNode(nodeId) {
+                try {
+                    this.selectedNode = nodeId;
+                    const node = this.nodes.get(nodeId);
+                    
+                    if (node) {
+                        const titleInput = safeGetElement('nodeTitleInput');
+                        const subtitleInput = safeGetElement('nodeSubtitleInput');
+                        
+                        if (titleInput) titleInput.value = node.title || '';
+                        if (subtitleInput) subtitleInput.value = node.subtitle || '';
+                        
+                        if (this.modalOverlay) this.modalOverlay.style.display = 'block';
+                        if (this.editModal) this.editModal.style.display = 'block';
+                        if (titleInput) titleInput.focus();
+                    }
+                } catch (error) {
+                    console.error('Error editing node:', error);
+                }
+            }
+
+            saveNodeEdit() {
+                try {
+                    if (!this.selectedNode) return;
+
+                    const node = this.nodes.get(this.selectedNode);
+                    const titleInput = safeGetElement('nodeTitleInput');
+                    const subtitleInput = safeGetElement('nodeSubtitleInput');
+                    
+                    if (node && titleInput && subtitleInput) {
+                        const newTitle = titleInput.value.trim();
+                        const newSubtitle = subtitleInput.value.trim();
+
+                        if (newTitle) {
+                            node.title = newTitle;
+                            node.subtitle = newSubtitle;
+
+                            const titleElement = node.element.querySelector('.node-title');
+                            const subtitleElement = node.element.querySelector('.node-subtitle');
+                            
+                            if (titleElement) titleElement.textContent = newTitle;
+                            if (subtitleElement) subtitleElement.textContent = newSubtitle;
+                        }
+                    }
+
+                    this.closeModal();
+                } catch (error) {
+                    console.error('Error saving node edit:', error);
+                }
+            }
+
+            deleteSelectedNode() {
+                try {
+                    if (!this.selectedNode) return;
+
+                    // Remove connections
+                    this.connections = new Set([...this.connections].filter(
+                        conn => !conn.includes(this.selectedNode)
+                    ));
+
+                    // Remove node element
+                    const node = this.nodes.get(this.selectedNode);
+                    if (node && node.element && node.element.parentNode) {
+                        node.element.parentNode.removeChild(node.element);
+                    }
+                    this.nodes.delete(this.selectedNode);
+
+                    this.updateConnections();
+                    this.closeModal();
+                    this.selectedNode = null;
+                } catch (error) {
+                    console.error('Error deleting node:', error);
+                }
+            }
+
+            closeModal() {
+                try {
+                    if (this.modalOverlay) this.modalOverlay.style.display = 'none';
+                    if (this.editModal) this.editModal.style.display = 'none';
+                } catch (error) {
+                    console.error('Error closing modal:', error);
+                }
+            }
+
+            addConnection(fromId, toId) {
+                try {
+                    if (fromId && toId) {
+                        const connectionId = `${fromId}-${toId}`;
+                        this.connections.add(connectionId);
+                    }
+                } catch (error) {
+                    console.error('Error adding connection:', error);
+                }
+            }
+
+            updateConnections() {
+                try {
+                    if (!this.connectionsContainer) return;
+
+                    // Clear existing connections
+                    this.connectionsContainer.innerHTML = '';
+
+                    this.connections.forEach(connectionId => {
+                        try {
+                            const [fromId, toId] = connectionId.split('-');
+                            const fromNode = this.nodes.get(fromId);
+                            const toNode = this.nodes.get(toId);
+
+                            if (fromNode && toNode) {
+                                const line = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                                
+                                const fromX = fromNode.x + 90; // center of node
+                                const fromY = fromNode.y + 40;
+                                const toX = toNode.x + 90;
+                                const toY = toNode.y + 40;
+
+                                // Create a curved path
+                                const midX = (fromX + toX) / 2;
+                                const midY = (fromY + toY) / 2;
+                                const controlX = midX;
+                                const controlY = midY - Math.abs(fromX - toX) * 0.2;
+
+                                const pathData = `M ${fromX} ${fromY} Q ${controlX} ${controlY} ${toX} ${toY}`;
+                                line.setAttribute('d', pathData);
+                                line.className = 'connection-line';
+
+                                this.connectionsContainer.appendChild(line);
+                            }
+                        } catch (connError) {
+                            console.warn('Error creating individual connection:', connError);
+                        }
+                    });
+                } catch (error) {
+                    console.error('Error updating connections:', error);
+                }
+            }
+
+            handleMouseDown(e) {
+                try {
+                    if (this.mode === 'pan' && e.target === this.canvas) {
+                        this.isDragging = true;
+                        if (this.canvas) this.canvas.classList.add('dragging');
+                        this.dragStart = { x: e.clientX - this.translateX, y: e.clientY - this.translateY };
+                    }
+                } catch (error) {
+                    console.error('Error handling mouse down:', error);
+                }
+            }
+
+            handleMouseMove(e) {
+                try {
+                    if (this.isDragging && this.mode === 'pan') {
+                        this.translateX = e.clientX - this.dragStart.x;
+                        this.translateY = e.clientY - this.dragStart.y;
+                        this.updateViewport();
+                    }
+
+                    // Update connecting line
+                    if (this.mode === 'connect' && this.connectingFrom && this.tempLine && this.connectingLine) {
+                        const fromNode = this.nodes.get(this.connectingFrom);
+                        if (fromNode && this.canvas) {
+                            const rect = this.canvas.getBoundingClientRect();
+                            
+                            const fromX = (fromNode.x + 90) * this.scale + this.translateX;
+                            const fromY = (fromNode.y + 40) * this.scale + this.translateY;
+                            const toX = e.clientX - rect.left;
+                            const toY = e.clientY - rect.top;
+
+                            this.tempLine.setAttribute('x1', fromX);
+                            this.tempLine.setAttribute('y1', fromY);
+                            this.tempLine.setAttribute('x2', toX);
+                            this.tempLine.setAttribute('y2', toY);
+                            this.connectingLine.style.display = 'block';
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error handling mouse move:', error);
+                }
+            }
+
+            handleMouseUp(e) {
+                try {
+                    if (this.isDragging) {
+                        this.isDragging = false;
+                        if (this.canvas) this.canvas.classList.remove('dragging');
+                    }
+                } catch (error) {
+                    console.error('Error handling mouse up:', error);
+                }
+            }
+
+            handleWheel(e) {
+                try {
+                    e.preventDefault();
+                    const delta = e.deltaY > 0 ? 0.9 : 1.1;
+                    this.zoom(delta, e.clientX, e.clientY);
+                } catch (error) {
+                    console.error('Error handling wheel:', error);
+                }
+            }
+
+            zoom(factor, centerX = window.innerWidth / 2, centerY = window.innerHeight / 2) {
+                try {
+                    if (!this.canvas) return;
+
+                    const rect = this.canvas.getBoundingClientRect();
+                    const x = centerX - rect.left;
+                    const y = centerY - rect.top;
+
+                    this.translateX = x - (x - this.translateX) * factor;
+                    this.translateY = y - (y - this.translateY) * factor;
+                    this.scale *= factor;
+
+                    // Limit zoom
+                    this.scale = Math.max(0.1, Math.min(3, this.scale));
+
+                    this.updateViewport();
+                    this.updateConnections();
+                } catch (error) {
+                    console.error('Error zooming:', error);
+                }
+            }
+
+            updateViewport() {
+                try {
+                    if (this.viewport) {
+                        this.viewport.style.transform = `translate(${this.translateX}px, ${this.translateY}px) scale(${this.scale})`;
+                    }
+                } catch (error) {
+                    console.error('Error updating viewport:', error);
+                }
+            }
+
+            resetView() {
+                try {
+                    this.scale = 1;
+                    this.translateX = 0;
+                    this.translateY = 0;
+                    this.updateViewport();
+                    this.updateConnections();
+                } catch (error) {
+                    console.error('Error resetting view:', error);
+                }
+            }
+
+            handleKeyDown(e) {
+                try {
+                    if (e.key === 'Delete' && this.selectedNode) {
+                        this.deleteSelectedNode();
+                    } else if (e.key === 'Escape') {
+                        this.setMode('pan');
+                        this.selectNode(null);
+                    }
+                } catch (error) {
+                    console.error('Error handling key down:', error);
+                }
+            }
+
+            exportData() {
+                try {
+                    const data = {
+                        nodes: [...this.nodes.values()].map(node => ({
+                            id: node.id,
+                            x: node.x,
+                            y: node.y,
+                            title: node.title,
+                            subtitle: node.subtitle,
+                            type: node.type
+                        })),
+                        connections: [...this.connections]
+                    };
+
+                    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'calisthenics-mindmap.json';
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                } catch (error) {
+                    console.error('Error exporting data:', error);
+                }
+            }
+        }
+
+        // Initialize the mind map when the page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            try {
+                new MindMap();
+            } catch (error) {
+                console.error('Error initializing MindMap:', error);
+            }
+        });
+    </script>
+</body>
+</html>
