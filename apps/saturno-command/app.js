@@ -1,5 +1,23 @@
 const { useState, useEffect, useRef } = React;
 
+// Document/Content Management - using localStorage for persistence
+const getStoredDocuments = () => {
+  try {
+    const stored = localStorage.getItem('saturno_command_documents');
+    return stored ? JSON.parse(stored) : [];
+  } catch (e) {
+    return [];
+  }
+};
+
+const saveDocuments = (docs) => {
+  try {
+    localStorage.setItem('saturno_command_documents', JSON.stringify(docs));
+  } catch (e) {
+    console.error('Failed to save documents:', e);
+  }
+};
+
 // Sample data from the provided JSON
 const sampleData = {
   metrics: {
@@ -271,9 +289,85 @@ const ContentCreator = () => {
   const [contentTitle, setContentTitle] = useState('');
   const [contentDescription, setContentDescription] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
+  const [documents, setDocuments] = useState(getStoredDocuments());
+  const [showDocuments, setShowDocuments] = useState(false);
 
   const platforms = ['Instagram', 'TikTok', 'YouTube', 'Blog'];
   const contentTypes = ['post', 'video', 'carousel', 'story', 'article'];
+
+  // Load documents on mount
+  useEffect(() => {
+    setDocuments(getStoredDocuments());
+  }, []);
+
+  const handleSchedulePost = () => {
+    if (!contentTitle.trim() || !generatedContent.trim()) {
+      alert('Please add a title and content before scheduling.');
+      return;
+    }
+    
+    const newDoc = {
+      id: Date.now().toString(),
+      title: contentTitle,
+      content: generatedContent,
+      platform: selectedPlatform,
+      type: contentType,
+      status: 'scheduled',
+      date: new Date().toISOString().split('T')[0],
+      createdAt: new Date().toISOString()
+    };
+    
+    const updatedDocs = [...documents, newDoc];
+    setDocuments(updatedDocs);
+    saveDocuments(updatedDocs);
+    
+    // Clear form
+    setContentTitle('');
+    setGeneratedContent('');
+    alert('Post scheduled successfully!');
+  };
+
+  const handleSaveDraft = () => {
+    if (!contentTitle.trim() || !generatedContent.trim()) {
+      alert('Please add a title and content before saving.');
+      return;
+    }
+    
+    const newDoc = {
+      id: Date.now().toString(),
+      title: contentTitle,
+      content: generatedContent,
+      platform: selectedPlatform,
+      type: contentType,
+      status: 'draft',
+      date: new Date().toISOString().split('T')[0],
+      createdAt: new Date().toISOString()
+    };
+    
+    const updatedDocs = [...documents, newDoc];
+    setDocuments(updatedDocs);
+    saveDocuments(updatedDocs);
+    
+    // Clear form
+    setContentTitle('');
+    setGeneratedContent('');
+    alert('Draft saved successfully!');
+  };
+
+  const handleDeleteDocument = (docId) => {
+    if (confirm('Are you sure you want to delete this document?')) {
+      const updatedDocs = documents.filter(doc => doc.id !== docId);
+      setDocuments(updatedDocs);
+      saveDocuments(updatedDocs);
+    }
+  };
+
+  const handleLoadDocument = (doc) => {
+    setContentTitle(doc.title);
+    setGeneratedContent(doc.content);
+    setSelectedPlatform(doc.platform);
+    setContentType(doc.type);
+  };
 
   const generateContent = async () => {
     setIsGenerating(true);
@@ -377,8 +471,8 @@ const ContentCreator = () => {
             </div>
 
             <div className="flex gap-8">
-              <button className="btn btn--primary btn--full-width">Schedule Post</button>
-              <button className="btn btn--outline btn--full-width">Save as Draft</button>
+              <button className="btn btn--primary btn--full-width" onClick={handleSchedulePost}>Schedule Post</button>
+              <button className="btn btn--outline btn--full-width" onClick={handleSaveDraft}>Save as Draft</button>
             </div>
           </div>
 
@@ -418,6 +512,52 @@ const ContentCreator = () => {
             </div>
           ))}
         </div>
+      </div>
+
+      <div className="section">
+        <div className="section__header">
+          <h3 className="section__title">My Documents</h3>
+          <button className="btn btn--outline" onClick={() => setShowDocuments(!showDocuments)}>
+            {showDocuments ? 'Hide' : 'Show'} Documents ({documents.length})
+          </button>
+        </div>
+        {showDocuments && (
+          <div className="content-list">
+            {documents.length === 0 ? (
+              <div style={{ padding: '24px', textAlign: 'center', color: 'var(--color-text-secondary)' }}>
+                No documents yet. Create your first one above!
+              </div>
+            ) : (
+              documents.map((doc) => (
+                <div key={doc.id} className="content-item">
+                  <div className="content-item__info">
+                    <div className="content-item__title">{doc.title}</div>
+                    <div className="content-item__meta">
+                      {doc.platform} • {doc.type} • {doc.date} • {doc.status}
+                    </div>
+                  </div>
+                  <div className="flex gap-8">
+                    <button 
+                      className="btn btn--sm btn--outline"
+                      onClick={() => handleLoadDocument(doc)}
+                    >
+                      Load
+                    </button>
+                    <button 
+                      className="btn btn--sm btn--secondary"
+                      onClick={() => handleDeleteDocument(doc.id)}
+                    >
+                      Delete
+                    </button>
+                    <div className={`status status--${doc.status === 'scheduled' ? 'success' : doc.status === 'draft' ? 'warning' : 'info'}`}>
+                      {doc.status}
+                    </div>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        )}
       </div>
     </div>
   );
@@ -584,11 +724,57 @@ const Analytics = () => {
 
 // Automation Component
 const Automation = () => {
+  const [workflows, setWorkflows] = useState(() => {
+    try {
+      const stored = localStorage.getItem('saturno_command_workflows');
+      return stored ? JSON.parse(stored) : sampleData.automationWorkflows;
+    } catch (e) {
+      return sampleData.automationWorkflows;
+    }
+  });
   const [selectedWorkflow, setSelectedWorkflow] = useState(null);
+  const [newWorkflowName, setNewWorkflowName] = useState('');
+  const [newWorkflowTrigger, setNewWorkflowTrigger] = useState('Time-based');
+  const [showWorkflowBuilder, setShowWorkflowBuilder] = useState(false);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('saturno_command_workflows', JSON.stringify(workflows));
+    } catch (e) {
+      console.error('Failed to save workflows:', e);
+    }
+  }, [workflows]);
 
   const toggleWorkflow = (index) => {
-    const updatedWorkflows = [...sampleData.automationWorkflows];
+    const updatedWorkflows = [...workflows];
     updatedWorkflows[index].status = updatedWorkflows[index].status === 'active' ? 'paused' : 'active';
+    setWorkflows(updatedWorkflows);
+  };
+
+  const handleCreateWorkflow = () => {
+    if (!newWorkflowName.trim()) {
+      alert('Please enter a workflow name');
+      return;
+    }
+    
+    const newWorkflow = {
+      name: newWorkflowName,
+      status: 'active',
+      triggers: 0,
+      success: 0
+    };
+    
+    setWorkflows([...workflows, newWorkflow]);
+    setNewWorkflowName('');
+    setShowWorkflowBuilder(false);
+    alert('Workflow created successfully!');
+  };
+
+  const handleDeleteWorkflow = (index) => {
+    if (confirm('Are you sure you want to delete this workflow?')) {
+      const updatedWorkflows = workflows.filter((_, i) => i !== index);
+      setWorkflows(updatedWorkflows);
+    }
   };
 
   return (
@@ -596,11 +782,48 @@ const Automation = () => {
       <div className="section">
         <div className="section__header">
           <h2 className="section__title">Automation Center</h2>
-          <button className="btn btn--primary">Create Workflow</button>
+          <button className="btn btn--primary" onClick={() => setShowWorkflowBuilder(!showWorkflowBuilder)}>
+            Create Workflow
+          </button>
         </div>
         
+        {showWorkflowBuilder && (
+          <div className="card" style={{ marginBottom: '24px' }}>
+            <div className="card__body">
+              <h3 style={{ marginBottom: '16px' }}>New Workflow</h3>
+              <div className="form-group">
+                <label className="form-label">Workflow Name</label>
+                <input 
+                  type="text" 
+                  className="form-control" 
+                  placeholder="Enter workflow name"
+                  value={newWorkflowName}
+                  onChange={(e) => setNewWorkflowName(e.target.value)}
+                />
+              </div>
+              <div className="form-group" style={{ marginTop: '16px' }}>
+                <label className="form-label">Trigger</label>
+                <select 
+                  className="form-control"
+                  value={newWorkflowTrigger}
+                  onChange={(e) => setNewWorkflowTrigger(e.target.value)}
+                >
+                  <option>Time-based</option>
+                  <option>Content published</option>
+                  <option>Engagement threshold</option>
+                  <option>Platform specific</option>
+                </select>
+              </div>
+              <div className="flex gap-8" style={{ marginTop: '16px' }}>
+                <button className="btn btn--primary" onClick={handleCreateWorkflow}>Create</button>
+                <button className="btn btn--outline" onClick={() => setShowWorkflowBuilder(false)}>Cancel</button>
+              </div>
+            </div>
+          </div>
+        )}
+        
         <div className="workflow-grid">
-          {sampleData.automationWorkflows.map((workflow, index) => (
+          {workflows.map((workflow, index) => (
             <div key={index} className="workflow-card">
               <div className="workflow-card__header">
                 <div className="workflow-card__title">{workflow.name}</div>
@@ -619,7 +842,19 @@ const Automation = () => {
                 >
                   {workflow.status === 'active' ? 'Pause' : 'Activate'}
                 </button>
-                <button className="btn btn--sm btn--secondary">Edit</button>
+                <button 
+                  className="btn btn--sm btn--secondary"
+                  onClick={() => setSelectedWorkflow(workflow)}
+                >
+                  Edit
+                </button>
+                <button 
+                  className="btn btn--sm btn--secondary"
+                  onClick={() => handleDeleteWorkflow(index)}
+                  style={{ color: 'var(--color-error)' }}
+                >
+                  Delete
+                </button>
               </div>
             </div>
           ))}
@@ -632,34 +867,44 @@ const Automation = () => {
         </div>
         <div className="card">
           <div className="card__body">
-            <div className="flex gap-16" style={{ marginBottom: '24px' }}>
-              <div className="form-group" style={{ flex: 1 }}>
-                <label className="form-label">Workflow Name</label>
-                <input type="text" className="form-control" placeholder="Enter workflow name" />
+            {selectedWorkflow ? (
+              <div>
+                <h4 style={{ marginBottom: '16px' }}>Editing: {selectedWorkflow.name}</h4>
+                <div className="flex gap-16" style={{ marginBottom: '24px' }}>
+                  <div className="form-group" style={{ flex: 1 }}>
+                    <label className="form-label">Workflow Name</label>
+                    <input type="text" className="form-control" defaultValue={selectedWorkflow.name} />
+                  </div>
+                  <div className="form-group" style={{ flex: 1 }}>
+                    <label className="form-label">Trigger</label>
+                    <select className="form-control" defaultValue="Time-based">
+                      <option>Time-based</option>
+                      <option>Content published</option>
+                      <option>Engagement threshold</option>
+                      <option>Platform specific</option>
+                    </select>
+                  </div>
+                </div>
+                <div className="form-group">
+                  <label className="form-label">Actions</label>
+                  <div className="flex gap-8">
+                    <button className="btn btn--outline" onClick={() => alert('Action added: Post to Instagram')}>+ Post to Instagram</button>
+                    <button className="btn btn--outline" onClick={() => alert('Action added: Share to Stories')}>+ Share to Stories</button>
+                    <button className="btn btn--outline" onClick={() => alert('Action added: Send Email')}>+ Send Email</button>
+                    <button className="btn btn--outline" onClick={() => alert('Action added: Update Calendar')}>+ Update Calendar</button>
+                  </div>
+                </div>
+                <div className="flex gap-8" style={{ marginTop: '24px' }}>
+                  <button className="btn btn--primary" onClick={() => { alert('Workflow saved!'); setSelectedWorkflow(null); }}>Save Workflow</button>
+                  <button className="btn btn--outline" onClick={() => alert('Testing workflow...')}>Test Workflow</button>
+                  <button className="btn btn--outline" onClick={() => setSelectedWorkflow(null)}>Cancel</button>
+                </div>
               </div>
-              <div className="form-group" style={{ flex: 1 }}>
-                <label className="form-label">Trigger</label>
-                <select className="form-control">
-                  <option>Time-based</option>
-                  <option>Content published</option>
-                  <option>Engagement threshold</option>
-                  <option>Platform specific</option>
-                </select>
+            ) : (
+              <div style={{ padding: '24px', textAlign: 'center', color: 'var(--color-text-secondary)' }}>
+                Select a workflow above to edit it, or create a new one.
               </div>
-            </div>
-            <div className="form-group">
-              <label className="form-label">Actions</label>
-              <div className="flex gap-8">
-                <button className="btn btn--outline">+ Post to Instagram</button>
-                <button className="btn btn--outline">+ Share to Stories</button>
-                <button className="btn btn--outline">+ Send Email</button>
-                <button className="btn btn--outline">+ Update Calendar</button>
-              </div>
-            </div>
-            <div className="flex gap-8" style={{ marginTop: '24px' }}>
-              <button className="btn btn--primary">Save Workflow</button>
-              <button className="btn btn--outline">Test Workflow</button>
-            </div>
+            )}
           </div>
         </div>
       </div>
@@ -696,14 +941,71 @@ const Automation = () => {
 
 // AI Legion Component
 const AILegion = () => {
+  const [prompts, setPrompts] = useState(() => {
+    try {
+      const stored = localStorage.getItem('saturno_command_prompts');
+      return stored ? JSON.parse(stored) : sampleData.aiLegionPrompts;
+    } catch (e) {
+      return sampleData.aiLegionPrompts;
+    }
+  });
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [customPrompt, setCustomPrompt] = useState('');
+  const [promptCategory, setPromptCategory] = useState('Motivation');
+  const [showPromptBuilder, setShowPromptBuilder] = useState(false);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('saturno_command_prompts', JSON.stringify(prompts));
+    } catch (e) {
+      console.error('Failed to save prompts:', e);
+    }
+  }, [prompts]);
 
   const categories = ['all', 'Motivation', 'Philosophy', 'Anti-Mainstream', 'Real Results'];
 
   const filteredPrompts = selectedCategory === 'all' 
-    ? sampleData.aiLegionPrompts 
-    : sampleData.aiLegionPrompts.filter(prompt => prompt.category === selectedCategory);
+    ? prompts 
+    : prompts.filter(prompt => prompt.category === selectedCategory);
+
+  const handleSavePrompt = () => {
+    if (!customPrompt.trim()) {
+      alert('Please enter a prompt text');
+      return;
+    }
+    
+    const newPrompt = {
+      category: promptCategory,
+      prompt: customPrompt,
+      usage: 0
+    };
+    
+    setPrompts([...prompts, newPrompt]);
+    setCustomPrompt('');
+    setShowPromptBuilder(false);
+    alert('Prompt saved successfully!');
+  };
+
+  const handleDeletePrompt = (index) => {
+    if (confirm('Are you sure you want to delete this prompt?')) {
+      const filtered = prompts.filter((_, i) => {
+        const filteredList = selectedCategory === 'all' ? prompts : prompts.filter(p => p.category === selectedCategory);
+        return i !== index;
+      });
+      setPrompts(filtered);
+    }
+  };
+
+  const handleUsePrompt = (prompt) => {
+    const updatedPrompts = prompts.map(p => 
+      p.prompt === prompt.prompt ? { ...p, usage: (p.usage || 0) + 1 } : p
+    );
+    setPrompts(updatedPrompts);
+    setCustomPrompt(prompt.prompt);
+    setPromptCategory(prompt.category);
+    setShowPromptBuilder(true);
+    alert('Prompt loaded into builder!');
+  };
 
   return (
     <div>
@@ -721,78 +1023,74 @@ const AILegion = () => {
                 <option key={cat} value={cat}>{cat === 'all' ? 'All Categories' : cat}</option>
               ))}
             </select>
-            <button className="btn btn--primary">Create Prompt</button>
+            <button className="btn btn--primary" onClick={() => setShowPromptBuilder(!showPromptBuilder)}>
+              {showPromptBuilder ? 'Hide Builder' : 'Create Prompt'}
+            </button>
           </div>
         </div>
         
-        <div className="prompt-library">
-          {filteredPrompts.map((prompt, index) => (
-            <div key={index} className="prompt-card">
-              <div className="prompt-card__header">
-                <div className="prompt-card__category">{prompt.category}</div>
-                <div className="prompt-card__usage">Used {prompt.usage} times</div>
+        {showPromptBuilder && (
+          <div className="card" style={{ marginBottom: '24px' }}>
+            <div className="card__body">
+              <h3 style={{ marginBottom: '16px' }}>Custom Prompt Builder</h3>
+              <div className="form-group">
+                <label className="form-label">Prompt Category</label>
+                <select 
+                  className="form-control"
+                  value={promptCategory}
+                  onChange={(e) => setPromptCategory(e.target.value)}
+                >
+                  <option>Motivation</option>
+                  <option>Philosophy</option>
+                  <option>Anti-Mainstream</option>
+                  <option>Real Results</option>
+                  <option>Workout Tips</option>
+                  <option>Nutrition</option>
+                </select>
               </div>
-              <div className="prompt-card__text">{prompt.prompt}</div>
+              <div className="form-group">
+                <label className="form-label">Prompt Text</label>
+                <textarea
+                  className="form-control"
+                  value={customPrompt}
+                  onChange={(e) => setCustomPrompt(e.target.value)}
+                  placeholder="Enter your custom AI prompt here..."
+                  rows="4"
+                />
+              </div>
               <div className="flex gap-8" style={{ marginTop: '16px' }}>
-                <button className="btn btn--sm btn--primary">Use Prompt</button>
-                <button className="btn btn--sm btn--outline">Edit</button>
+                <button className="btn btn--primary" onClick={handleSavePrompt}>Save Prompt</button>
+                <button className="btn btn--outline" onClick={() => alert('Testing prompt...')}>Test Prompt</button>
+                <button className="btn btn--outline" onClick={() => { setShowPromptBuilder(false); setCustomPrompt(''); }}>Cancel</button>
               </div>
             </div>
-          ))}
+          </div>
+        )}
+        
+        <div className="prompt-library">
+          {filteredPrompts.length === 0 ? (
+            <div style={{ padding: '24px', textAlign: 'center', color: 'var(--color-text-secondary)' }}>
+              No prompts found. Create your first one above!
+            </div>
+          ) : (
+            filteredPrompts.map((prompt, index) => (
+              <div key={index} className="prompt-card">
+                <div className="prompt-card__header">
+                  <div className="prompt-card__category">{prompt.category}</div>
+                  <div className="prompt-card__usage">Used {prompt.usage || 0} times</div>
+                </div>
+                <div className="prompt-card__text">{prompt.prompt}</div>
+                <div className="flex gap-8" style={{ marginTop: '16px' }}>
+                  <button className="btn btn--sm btn--primary" onClick={() => handleUsePrompt(prompt)}>Use Prompt</button>
+                  <button className="btn btn--sm btn--outline" onClick={() => { setCustomPrompt(prompt.prompt); setPromptCategory(prompt.category); setShowPromptBuilder(true); }}>Edit</button>
+                  <button className="btn btn--sm btn--secondary" onClick={() => handleDeletePrompt(index)} style={{ color: 'var(--color-error)' }}>Delete</button>
+                </div>
+              </div>
+            ))
+          )}
         </div>
       </div>
 
-      <div className="section">
-        <div className="section__header">
-          <h3 className="section__title">Custom Prompt Builder</h3>
-        </div>
-        <div className="card">
-          <div className="card__body">
-            <div className="form-group">
-              <label className="form-label">Prompt Category</label>
-              <select className="form-control">
-                <option>Motivation</option>
-                <option>Philosophy</option>
-                <option>Anti-Mainstream</option>
-                <option>Real Results</option>
-                <option>Workout Tips</option>
-                <option>Nutrition</option>
-              </select>
-            </div>
-            <div className="form-group">
-              <label className="form-label">Prompt Text</label>
-              <textarea
-                className="form-control"
-                value={customPrompt}
-                onChange={(e) => setCustomPrompt(e.target.value)}
-                placeholder="Enter your custom AI prompt here..."
-                rows="4"
-              />
-            </div>
-            <div className="form-group">
-              <label className="form-label">Target Platforms</label>
-              <div className="flex gap-8">
-                <label className="flex items-center gap-4">
-                  <input type="checkbox" defaultChecked /> Instagram
-                </label>
-                <label className="flex items-center gap-4">
-                  <input type="checkbox" defaultChecked /> TikTok
-                </label>
-                <label className="flex items-center gap-4">
-                  <input type="checkbox" /> YouTube
-                </label>
-                <label className="flex items-center gap-4">
-                  <input type="checkbox" /> Blog
-                </label>
-              </div>
-            </div>
-            <div className="flex gap-8">
-              <button className="btn btn--primary">Save Prompt</button>
-              <button className="btn btn--outline">Test Prompt</button>
-            </div>
-          </div>
-        </div>
-      </div>
 
       <div className="section">
         <div className="section__header">
