@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Saturno Writing Hub - Professional System</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div id="loading-screen" class="loading-screen">
+        <div class="saturn-system">
+            <div class="saturn-planet"></div>
+            <div class="saturn-ring-1"></div>
+            <div class="saturn-ring-2"></div>
+        </div>
+        <div class="loading-text">
+            <h2>Saturno Writing Hub</h2>
+            <p>Initializing Professional System...</p>
+        </div>
+    </div>
+
+    <!-- Main App Container -->
+    <div id="app-container" class="app-container hidden">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-left">
+                <div class="logo">
+                    <i class="fas fa-planet-saturn"></i>
+                    <span>Saturno Writing Hub</span>
+                </div>
+                <div class="project-info">
+                    <span class="project-name">Handstand OS Vault</span>
+                    <span class="project-status">Active Project</span>
+                </div>
+            </div>
+            <div class="header-center">
+                <div class="voice-controls">
+                    <button id="voice-toggle" class="voice-btn">
+                        <i class="fas fa-microphone"></i>
+                        <span class="voice-status">Voice Ready</span>
+                    </button>
+                    <div id="voice-indicator" class="voice-indicator">
+                        <div class="voice-wave"></div>
+                        <div class="voice-wave"></div>
+                        <div class="voice-wave"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="header-right">
+                <button id="theme-toggle" class="header-btn">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <button id="export-btn" class="header-btn primary">
+                    <i class="fas fa-download"></i>
+                    Export
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <div class="app-body">
+            <!-- Left Sidebar - Document Vault -->
+            <aside class="sidebar left-sidebar">
+                <div class="sidebar-header">
+                    <h2><i class="fas fa-folder"></i> Document Vault</h2>
+                    <div class="saturn-indicator">
+                        <div class="saturn-core"></div>
+                    </div>
+                </div>
+                
+                <div class="vault-content">
+                    <!-- Strategic Foundation -->
+                    <div class="vault-section">
+                        <h3><i class="fas fa-chess-king"></i> Strategic Foundation</h3>
+                        <div class="vault-items">
+                            <button class="vault-item" data-action="load-brand-framework">
+                                <span class="icon">🎯</span>
+                                <div class="vault-info">
+                                    <h4>Brand Identity Framework</h4>
+                                    <span class="vault-meta">Strategic positioning & voice</span>
+                                </div>
+                            </button>
+                            <button class="vault-item" data-action="load-content-audit">
+                                <span class="icon">📊</span>
+                                <div class="vault-info">
+                                    <h4>Content Audit Tools</h4>
+                                    <span class="vault-meta">Analysis & optimization</span>
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Program Library -->
+                    <div class="vault-section">
+                        <h3><i class="fas fa-layer-group"></i> Program Library</h3>
+                        <div class="vault-items">
+                            <button class="vault-item featured" data-action="load-handstand-blueprint">
+                                <span class="icon">🧠</span>
+                                <div class="vault-info">
+                                    <h4>Handstand OS Blueprint</h4>
+                                    <span class="vault-meta">6 Weeks • TLC Blocks • Session Scripts</span>
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width: 35%"></div>
+                                    </div>
+                                </div>
+                            </button>
+                            <button class="vault-item" data-action="load-exercise-database">
+                                <span class="icon">💪</span>
+                                <div class="vault-info">
+                                    <h4>Exercise Database</h4>
+                                    <span class="vault-meta">700+ movements with video</span>
+                                </div>
+                            </button>
+                            <button class="vault-item" data-action="load-flexibility-designer">
+                                <span class="icon">🤸</span>
+                                <div class="vault-info">
+                                    <h4>Flexibility Program Designer</h4>
+                                    <span class="vault-meta">Interactive program builder</span>
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Operations & Systems -->
+                    <div class="vault-section">
+                        <h3><i class="fas fa-cogs"></i> Operations & Systems</h3>
+                        <div class="vault-items">
+                            <button class="vault-item" data-action="load-command-center">
+                                <span class="icon">⚡</span>
+                                <div class="vault-info">
+                                    <h4>Digital Empire Command</h4>
+                                    <span class="vault-meta">System management hub</span>
+                                </div>
+                            </button>
+                            <button class="vault-item" data-action="load-msopm-system">
+                                <span class="icon">🧠</span>
+                                <div class="vault-info">
+                                    <h4>MSOPM System</h4>
+                                    <span class="vault-meta">Advanced methodology</span>
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Main Workspace -->
+            <main class="workspace">
+                <div class="workspace-header">
+                    <div class="workspace-tabs">
+                        <button class="tab-btn active" data-tab="editor">
+                            <i class="fas fa-edit"></i>
+                            Editor
+                        </button>
+                        <button class="tab-btn" data-tab="preview">
+                            <i class="fas fa-eye"></i>
+                            Preview
+                        </button>
+                        <button class="tab-btn" data-tab="html-viewer">
+                            <i class="fas fa-code"></i>
+                            HTML Viewer
+                        </button>
+                        <button class="tab-btn" data-tab="ai-assistant">
+                            <i class="fas fa-robot"></i>
+                            AI Assistant
+                        </button>
+                    </div>
+                    <div class="workspace-stats">
+                        <span class="stat-item">
+                            <i class="fas fa-file-word"></i>
+                            <span id="word-count">0</span> words
+                        </span>
+                        <span class="stat-item">
+                            <i class="fas fa-save"></i>
+                            <span id="save-status">Saved</span>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="workspace-content">
+                    <!-- Editor Tab -->
+                    <div class="tab-content active" id="editor-tab">
+                        <div class="editor-toolbar">
+                            <div class="toolbar-group">
+                                <button class="tool-btn" data-action="bold">
+                                    <i class="fas fa-bold"></i>
+                                </button>
+                                <button class="tool-btn" data-action="italic">
+                                    <i class="fas fa-italic"></i>
+                                </button>
+                                <button class="tool-btn" data-action="underline">
+                                    <i class="fas fa-underline"></i>
+                                </button>
+                            </div>
+                            <div class="toolbar-group">
+                                <button class="tool-btn" data-action="h1">H1</button>
+                                <button class="tool-btn" data-action="h2">H2</button>
+                                <button class="tool-btn" data-action="h3">H3</button>
+                            </div>
+                            <div class="toolbar-group">
+                                <button class="tool-btn" data-action="list">
+                                    <i class="fas fa-list-ul"></i>
+                                </button>
+                                <button class="tool-btn" data-action="link">
+                                    <i class="fas fa-link"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="editor-container">
+                            <textarea id="main-editor" class="main-editor" placeholder="Start writing... Use voice commands like 'Load Framework Architect' or 'Run Business Intelligence'"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Preview Tab -->
+                    <div class="tab-content" id="preview-tab">
+                        <div class="preview-container">
+                            <div id="preview-content" class="preview-content">
+                                <p class="placeholder">Preview will appear here when you start writing...</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- HTML Viewer Tab -->
+                    <div class="tab-content" id="html-viewer-tab">
+                        <div class="html-viewer">
+                            <div class="viewer-header">
+                                <select id="html-selector" class="html-select">
+                                    <option value="">Select HTML to display...</option>
+                                    <option value="flexibility-program-designer">Flexibility Program Designer</option>
+                                    <option value="chapter-card-variations">Chapter Card Variations</option>
+                                    <option value="handstand-os-blueprint">Handstand OS Blueprint</option>
+                                    <option value="mind-map-toc">Interactive Mind Map</option>
+                                </select>
+                                <button id="fullscreen-btn" class="tool-btn">
+                                    <i class="fas fa-expand"></i>
+                                </button>
+                            </div>
+                            <div class="html-frame-container">
+                                <iframe id="html-frame" src="" frameborder="0"></iframe>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- AI Assistant Tab -->
+                    <div class="tab-content" id="ai-assistant-tab">
+                        <div class="ai-assistant">
+                            <div class="ai-header">
+                                <h3><i class="fas fa-robot"></i> AI Writing Assistant</h3>
+                                <div class="ai-status">Ready</div>
+                            </div>
+                            <div class="ai-chat">
+                                <div class="ai-messages" id="ai-messages">
+                                    <div class="ai-message assistant">
+                                        <div class="message-avatar">
+                                            <i class="fas fa-robot"></i>
+                                        </div>
+                                        <div class="message-content">
+                                            Hello! I'm here to help with your writing. Try voice commands like "Load Framework Architect" or click any prompt from the right panel.
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="ai-input">
+                                    <input type="text" id="ai-input" placeholder="Ask me anything about your content...">
+                                    <button id="ai-send">
+                                        <i class="fas fa-paper-plane"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+
+            <!-- Right Sidebar - Prompt Vault -->
+            <aside class="sidebar right-sidebar">
+                <div class="sidebar-header">
+                    <h2><i class="fas fa-lightbulb"></i> Prompt Vault</h2>
+                </div>
+                
+                <div class="prompt-tabs">
+                    <button class="prompt-tab active" data-tab="business">
+                        <i class="fas fa-chart-line"></i>
+                        Business
+                    </button>
+                    <button class="prompt-tab" data-tab="writing">
+                        <i class="fas fa-pen-fancy"></i>
+                        Writing
+                    </button>
+                    <button class="prompt-tab" data-tab="msopm">
+                        <i class="fas fa-brain"></i>
+                        MSOPM
+                    </button>
+                </div>
+
+                <div class="prompt-content">
+                    <!-- Business Tab -->
+                    <div class="prompt-tab-content active" id="business-prompts">
+                        <div class="prompt-item high-value">
+                            <div class="prompt-header">
+                                <h4>Market Intelligence Engine</h4>
+                                <span class="roi-badge">450% ROI</span>
+                            </div>
+                            <p>Generate actionable market insights from social media, reviews, and public data sources</p>
+                            <button class="prompt-load-btn" data-prompt="market-intelligence">
+                                Load Framework
+                            </button>
+                        </div>
+
+                        <div class="prompt-item high-value">
+                            <div class="prompt-header">
+                                <h4>SWOT Analysis Pro</h4>
+                                <span class="roi-badge">600% ROI</span>
+                            </div>
+                            <p>Comprehensive competitive analysis for strategic positioning</p>
+                            <button class="prompt-load-btn" data-prompt="swot-analysis">
+                                Load Framework
+                            </button>
+                        </div>
+
+                        <div class="prompt-item high-value">
+                            <div class="prompt-header">
+                                <h4>Lead Generation System</h4>
+                                <span class="roi-badge">420% ROI</span>
+                            </div>
+                            <p>Core Four pillars for organic traffic and conversion</p>
+                            <button class="prompt-load-btn" data-prompt="lead-generation">
+                                Load Framework
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Writing Tab -->
+                    <div class="prompt-tab-content" id="writing-prompts">
+                        <div class="prompt-item">
+                            <div class="prompt-header">
+                                <h4>Framework Architect</h4>
+                                <span class="category-badge">Structure</span>
+                            </div>
+                            <p>Knowledge synthesis protocol for content structuring</p>
+                            <button class="prompt-load-btn" data-prompt="framework-architect">
+                                Load Framework
+                            </button>
+                        </div>
+
+                        <div class="prompt-item">
+                            <div class="prompt-header">
+                                <h4>Visual Systems Designer</h4>
+                                <span class="category-badge">Design</span>
+                            </div>
+                            <p>Transform concepts into compelling visual identity</p>
+                            <button class="prompt-load-btn" data-prompt="visual-designer">
+                                Load Framework
+                            </button>
+                        </div>
+
+                        <div class="prompt-item">
+                            <div class="prompt-header">
+                                <h4>Content Alchemist</h4>
+                                <span class="category-badge">Multi-format</span>
+                            </div>
+                            <p>Multi-format content deployment with authentic voice</p>
+                            <button class="prompt-load-btn" data-prompt="content-alchemist">
+                                Load Framework
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- MSOPM Tab -->
+                    <div class="prompt-tab-content" id="msopm-prompts">
+                        <div class="prompt-item advanced">
+                            <div class="prompt-header">
+                                <h4>Master System Organization</h4>
+                                <span class="category-badge">Organization</span>
+                            </div>
+                            <p>Analyze and organize complex document collections</p>
+                            <button class="prompt-load-btn" data-prompt="master-organization">
+                                Load Framework
+                            </button>
+                        </div>
+
+                        <div class="prompt-item advanced">
+                            <div class="prompt-header">
+                                <h4>Duplicate Detection</h4>
+                                <span class="category-badge">Analysis</span>
+                            </div>
+                            <p>Identify and consolidate similar content</p>
+                            <button class="prompt-load-btn" data-prompt="duplicate-detection">
+                                Load Framework
+                            </button>
+                        </div>
+
+                        <div class="prompt-item advanced">
+                            <div class="prompt-header">
+                                <h4>Content Synthesis</h4>
+                                <span class="category-badge">Merge</span>
+                            </div>
+                            <p>Combine multiple versions while preserving value</p>
+                            <button class="prompt-load-btn" data-prompt="content-synthesis">
+                                Load Framework
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <!-- Voice Command Modal -->
+    <div id="voice-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-microphone"></i> Voice Commands Active</h3>
+                <button class="modal-close" id="close-voice-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="listening-indicator">
+                    <div class="pulse-ring"></div>
+                    <div class="pulse-ring"></div>
+                    <div class="pulse-ring"></div>
+                </div>
+                <p class="listening-text">Listening... Say a command like:</p>
+                <ul class="voice-commands">
+                    <li>"Load Framework Architect"</li>
+                    <li>"Run Business Intelligence"</li>
+                    <li>"Execute SWOT Analysis"</li>
+                    <li>"Generate Lead System"</li>
+                    <li>"Open Visual Designer"</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
